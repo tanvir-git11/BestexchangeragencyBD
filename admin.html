@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Dollar Exchange Bangladesh</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              slate: '#f8fafc',
+              blue: '#2563eb',
+              blueHover: '#1d4ed8',
+              green: '#10b981',
+              greenHover: '#059669',
+            }
+          },
+          fontFamily: {
+            siliguri: ['Hind Siliguri', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 font-siliguri min-h-screen flex flex-col antialiased">
+
+  <!-- Admin Login Overlay -->
+  <div id="login-overlay" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl border border-slate-100 shadow-premium-lg p-6 md:p-8 space-y-6 animate-slide-up">
+      
+      <div class="text-center space-y-2">
+        <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto">
+          <i data-lucide="lock" class="w-6 h-6"></i>
+        </div>
+        <h2 class="text-xl font-bold text-slate-800">অ্যাডমিন লগইন</h2>
+        <p class="text-xs text-slate-400">অ্যাডমিন ড্যাশবোর্ডে প্রবেশ করতে সিকিউরিটি পাসকোড দিন।</p>
+      </div>
+
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 mb-1">অ্যাডমিন পাসকোড</label>
+          <input type="password" id="admin-passcode" placeholder="যেমন: admin123" class="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none input-premium text-center font-bold tracking-widest text-lg" required>
+          <span class="block text-[10px] text-slate-400 text-center mt-1">টেস্ট পাসকোড: <code class="font-mono bg-slate-100 px-1 py-0.5 rounded font-bold">admin123</code></span>
+        </div>
+
+        <div id="login-error" class="hidden text-xs bg-rose-50 text-rose-700 p-2.5 rounded-lg border border-rose-100 text-center font-medium"></div>
+
+        <button type="submit" class="w-full h-11 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow flex items-center justify-center gap-2">
+          লগইন করুন
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+        </button>
+      </form>
+
+      <div class="text-center border-t border-slate-100 pt-4">
+        <a href="index.html" class="text-xs text-slate-500 hover:text-blue-600 transition flex items-center justify-center gap-1">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> হোম পেজে ফিরে যান
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Dashboard Main Layout (Hidden by default until logged in) -->
+  <div id="dashboard-content" class="hidden flex-grow flex flex-col">
+    
+    <!-- Admin Navbar -->
+    <header class="bg-slate-900 text-white shadow-md">
+      <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+        
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-indigo-500 flex items-center justify-center text-white shadow-md">
+            <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h1 class="text-base md:text-lg font-bold">অ্যাডমিন কন্ট্রোল ড্যাশবোর্ড</h1>
+            <span class="text-[10px] text-slate-400 block -mt-0.5">Dollar Exchange Operations</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <a href="index.html" target="_blank" class="text-xs text-slate-300 hover:text-white border border-slate-700 hover:bg-slate-800 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i> সাইট ভিজিট করুন
+          </a>
+          
+          <button id="btn-logout" class="px-3.5 py-1.5 text-xs bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition font-semibold flex items-center gap-1.5">
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            <span>লগআউট</span>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Admin Body -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl space-y-8">
+      
+      <!-- Top Settings Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left: Rates Controller -->
+        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-100 shadow-premium p-6 space-y-5">
+          <h2 class="text-base font-bold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
+            <i data-lucide="arrow-up-right" class="w-5 h-5 text-indigo-500"></i>
+            এক্সচেঞ্জ রেট এবং জেনারেল সেটিংস
+          </h2>
+
+          <form id="form-rates" class="space-y-4">
+            
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <!-- Binance rate -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Binance (USDT)</label>
+                <div class="relative">
+                  <input type="number" step="0.01" id="rate-binance" class="w-full h-10 px-3 rounded-lg border border-slate-200 focus:outline-none input-premium font-semibold text-sm" required>
+                  <span class="absolute right-3 top-2.5 text-slate-400 font-bold text-xs">BDT</span>
+                </div>
+              </div>
+              
+              <!-- RedotPay rate -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">RedotPay (USDT)</label>
+                <div class="relative">
+                  <input type="number" step="0.01" id="rate-redotpay" class="w-full h-10 px-3 rounded-lg border border-slate-200 focus:outline-none input-premium font-semibold text-sm" required>
+                  <span class="absolute right-3 top-2.5 text-slate-400 font-bold text-xs">BDT</span>
+                </div>
+              </div>
+
+              <!-- Wise rate -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Wise (USD)</label>
+                <div class="relative">
+                  <input type="number" step="0.01" id="rate-wise" class="w-full h-10 px-3 rounded-lg border border-slate-200 focus:outline-none input-premium font-semibold text-sm" required>
+                  <span class="absolute right-3 top-2.5 text-slate-400 font-bold text-xs">BDT</span>
+                </div>
+              </div>
+
+              <!-- Bybit rate -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Bybit (USDT)</label>
+                <div class="relative">
+                  <input type="number" step="0.01" id="rate-bybit" class="w-full h-10 px-3 rounded-lg border border-slate-200 focus:outline-none input-premium font-semibold text-sm" required>
+                  <span class="absolute right-3 top-2.5 text-slate-400 font-bold text-xs">BDT</span>
+                </div>
+              </div>
+
+              <!-- Payoneer rate -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Payoneer (USD)</label>
+                <div class="relative">
+                  <input type="number" step="0.01" id="rate-payoneer" class="w-full h-10 px-3 rounded-lg border border-slate-200 focus:outline-none input-premium font-semibold text-sm" required>
+                  <span class="absolute right-3 top-2.5 text-slate-400 font-bold text-xs">BDT</span>
+                </div>
+              </div>
+
+              <!-- Quotex rate -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Quotex (USD)</label>
+                <div class="relative">
+                  <input type="number" step="0.01" id="rate-quotex" class="w-full h-10 px-3 rounded-lg border border-slate-200 focus:outline-none input-premium font-semibold text-sm" required>
+                  <span class="absolute right-3 top-2.5 text-slate-400 font-bold text-xs">BDT</span>
+                </div>
+              </div>
+
+              <!-- PayPal rate -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">PayPal (USD)</label>
+                <div class="relative">
+                  <input type="number" step="0.01" id="rate-paypal" class="w-full h-10 px-3 rounded-lg border border-slate-200 focus:outline-none input-premium font-semibold text-sm" required>
+                  <span class="absolute right-3 top-2.5 text-slate-400 font-bold text-xs">BDT</span>
+                </div>
+              </div>
+
+              <!-- USDT rate -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">USDT (TRC/ERC)</label>
+                <div class="relative">
+                  <input type="number" step="0.01" id="rate-usdt" class="w-full h-10 px-3 rounded-lg border border-slate-200 focus:outline-none input-premium font-semibold text-sm" required>
+                  <span class="absolute right-3 top-2.5 text-slate-400 font-bold text-xs">BDT</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Exchange Limits -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-50 pt-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">সর্বনিম্ন এক্সচেঞ্জ (BDT)</label>
+                <input type="number" id="limit-min" class="w-full h-10 px-3 rounded-lg border border-slate-200 focus:outline-none input-premium font-semibold text-sm" required>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">সর্বোচ্চ এক্সচেঞ্জ (BDT)</label>
+                <input type="number" id="limit-max" class="w-full h-10 px-3 rounded-lg border border-slate-200 focus:outline-none input-premium font-semibold text-sm" required>
+              </div>
+            </div>
+
+            <!-- Announcement Notice Box -->
+            <div class="border-t border-slate-50 pt-4">
+              <label class="block text-xs font-semibold text-slate-500 mb-1">টপ নোটিশ ব্যানার টেক্সট</label>
+              <textarea id="admin-notice" rows="2" class="w-full p-3 rounded-lg border border-slate-200 focus:outline-none input-premium text-sm leading-relaxed" required></textarea>
+            </div>
+
+            <!-- Submit rates btn -->
+            <div class="pt-2 text-right">
+              <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center gap-1.5 ml-auto">
+                <i data-lucide="check-circle" class="w-4 h-4"></i> সেটিংস সেভ করুন
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- Right: Wallets Config Controller -->
+        <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-100 shadow-premium p-6 space-y-5">
+          <h2 class="text-base font-bold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
+            <i data-lucide="wallet" class="w-5 h-5 text-emerald-500"></i>
+            পেমেন্ট ওয়ালেট নাম্বারসমূহ
+          </h2>
+
+          <form id="form-wallets" class="space-y-4">
+            
+            <!-- bKash Number -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1">bKash (Agent) Number</label>
+              <input type="text" id="wallet-bkash" class="w-full h-10 px-3 rounded-lg border border-slate-200 focus:outline-none input-premium font-bold text-sm tracking-wide text-slate-700" required>
+              <span class="block text-[9px] text-slate-400 mt-0.5">গ্রাহক এই নাম্বারে ক্যাশ আউট করবে।</span>
+            </div>
+
+            <!-- Nagad Number -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1">Nagad (Personal) Number</label>
+              <input type="text" id="wallet-nagad" class="w-full h-10 px-3 rounded-lg border border-slate-200 focus:outline-none input-premium font-bold text-sm tracking-wide text-slate-700" required>
+              <span class="block text-[9px] text-slate-400 mt-0.5">গ্রাহক এই নাম্বারে সেন্ড মানি করবে।</span>
+            </div>
+
+            <!-- Submit wallets btn -->
+            <div class="pt-2 text-right">
+              <button type="submit" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center gap-1.5 ml-auto">
+                <i data-lucide="check-circle" class="w-4 h-4"></i> নাম্বারগুলো সেভ করুন
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+
+      <!-- Bottom Layout: Transactions Panel -->
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-premium p-6 space-y-5">
+        
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3 flex-wrap gap-2">
+          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+            <i data-lucide="history" class="w-5 h-5 text-indigo-500"></i>
+            গ্রাহক পেমেন্ট ও এক্সচেঞ্জ লেনদেন রেকর্ড
+          </h2>
+          <span class="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-semibold">লাইভ ট্র্যাকিং</span>
+        </div>
+
+        <!-- Table Responsive Container -->
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse text-left whitespace-nowrap">
+            <thead>
+              <tr class="bg-slate-50/70 border-b border-slate-100 text-xs font-semibold text-slate-500">
+                <th class="px-6 py-3">আইডি</th>
+                <th class="px-6 py-3">তারিখ</th>
+                <th class="px-6 py-3">ধরণ (এক্সচেঞ্জ পাথ)</th>
+                <th class="px-6 py-3">পাঠানো পরিমাণ</th>
+                <th class="px-6 py-3">পাওয়ার পরিমাণ</th>
+                <th class="px-6 py-3">গ্রাহক ওয়ালেট/এড্রেস</th>
+                <th class="px-6 py-3">মোবাইল নাম্বার</th>
+                <th class="px-6 py-3">ট্রানজেকশন TxID</th>
+                <th class="px-6 py-3">অবস্থা (Status)</th>
+                <th class="px-6 py-3">অ্যাকশন</th>
+              </tr>
+            </thead>
+            <tbody id="tx-table-body" class="divide-y divide-slate-100">
+              <!-- Rendered via JS -->
+              <tr>
+                <td colspan="10" class="px-6 py-10 text-center text-slate-400 text-sm">
+                  লোড হচ্ছে...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Toast Notification Overlay -->
+  <div id="admin-toast" class="hidden">
+    <span id="toast-message"></span>
+  </div>
+
+  <!-- State & Logic Scripts -->
+  <script src="js/app.js?v=1.1"></script>
+  <script src="js/admin.js?v=1.1"></script>
+  <script>
+    // Initialize icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>

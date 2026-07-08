@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dollar Exchange - বাংলাদেশের বিশ্বস্ত ডলার এক্সচেঞ্জ প্ল্যাটফর্ম</title>
+  <meta name="description" content="নিরাপদ এবং দ্রুত ডলার এক্সচেঞ্জ করুন। bKash দিয়ে সহজে ডলার কিনুন বা এক্সচেঞ্জ করুন সেরা রেটে।">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              slate: '#f8fafc',
+              blue: '#2563eb',
+              blueHover: '#1d4ed8',
+              green: '#10b981',
+              greenHover: '#059669',
+            }
+          },
+          fontFamily: {
+            siliguri: ['Hind Siliguri', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 font-siliguri min-h-screen flex flex-col antialiased">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-indigo-600 text-white text-xs py-2.5 px-4 overflow-hidden relative">
+    <div class="container mx-auto flex items-center justify-between gap-4">
+      <div class="flex items-center gap-2 max-w-full truncate">
+        <span class="flex h-2 w-2 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+        <span class="font-medium truncate" id="notice-banner-text">লোড হচ্ছে...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-100/80 shadow-sm shadow-slate-100/50">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+      
+      <!-- Logo and Description -->
+      <a href="index.html" class="flex items-center gap-3 select-none">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-200">
+          <i data-lucide="arrow-right-left" class="w-5.5 h-5.5"></i>
+        </div>
+        <div>
+          <span class="text-lg md:text-xl font-bold tracking-tight text-slate-800 flex items-center gap-1.5">
+            Dollar Exchange
+          </span>
+          <span class="hidden sm:block text-[11px] text-slate-500 -mt-0.5">
+            বাংলাদেশের বিশ্বস্ত ডলার এক্সচেঞ্জ প্ল্যাটফর্ম
+          </span>
+        </div>
+      </a>
+
+      <!-- Navigation actions -->
+      <div class="flex items-center gap-4">
+        <!-- Language Switch Option -->
+        <button class="px-3.5 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200/80 rounded-lg transition-all flex items-center gap-1.5">
+          <i data-lucide="languages" class="w-3.5 h-3.5"></i>
+          <span>Bangla (BD)</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow container mx-auto px-4 py-8 md:py-16 max-w-6xl">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      
+      <!-- Hero Section -->
+      <div class="lg:col-span-6 space-y-6 md:space-y-8 animate-slide-up text-center lg:text-left">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100/50">
+          <i data-lucide="shield-check" class="w-4 h-4"></i>
+          <span class="text-xs font-semibold">১০০% নিরাপদ ও বিশ্বস্ত লেনদেন</span>
+        </div>
+        
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight">
+          সহজে ডলার কিনুন ও <br class="hidden md:inline">
+          <span class="bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent">এক্সচেঞ্জ করুন</span>
+        </h1>
+        
+        <p class="text-base sm:text-lg text-slate-600 max-w-lg mx-auto lg:mx-0">
+          দ্রুত, নিরাপদ এবং নির্ভরযোগ্য ডলার এক্সচেঞ্জ সেবা। কোনো ঝামেলা ছাড়াই ঘরে বসে আপনার পছন্দের ওয়ালেটে ডলার বুঝে নিন।
+        </p>
+
+        <!-- Illustration -->
+        <div class="pt-6 relative max-w-md mx-auto lg:mx-0 animate-float">
+          <!-- Background glow -->
+          <div class="absolute -inset-4 bg-gradient-to-tr from-blue-100 to-indigo-50/50 rounded-full blur-3xl opacity-60 z-0"></div>
+          
+          <!-- Pure CSS Vector Illustration -->
+          <div class="relative z-10 bg-white/70 backdrop-blur-md rounded-2xl border border-slate-100 shadow-premium p-6 flex flex-col gap-5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <!-- Bangladesh flag representation -->
+                <svg class="w-10 h-6 rounded shadow-sm shrink-0" viewBox="0 0 40 24" style="width: 40px; height: 24px;">
+                  <rect width="40" height="24" fill="#006a4e"/>
+                  <circle cx="16" cy="12" r="7" fill="#f42a41"/>
+                </svg>
+                <div class="text-left">
+                  <span class="block text-xs font-bold text-slate-800">BDT</span>
+                  <span class="block text-[10px] text-slate-400">Bangladesh</span>
+                </div>
+              </div>
+              
+              <!-- Exchange animation arrows -->
+              <div class="flex flex-col items-center gap-0.5">
+                <i data-lucide="arrow-right" class="w-4 h-4 text-blue-500 animate-pulse"></i>
+                <i data-lucide="arrow-left" class="w-4 h-4 text-emerald-500 animate-pulse"></i>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <!-- US flag representation -->
+                <svg class="w-10 h-6 rounded shadow-sm shrink-0" viewBox="0 0 40 24" style="width: 40px; height: 24px;">
+                  <rect width="40" height="24" fill="#ffffff"/>
+                  <!-- Stripes -->
+                  <rect width="40" height="2" fill="#b22234"/>
+                  <rect y="4" width="40" height="2" fill="#b22234"/>
+                  <rect y="8" width="40" height="2" fill="#b22234"/>
+                  <rect y="12" width="40" height="2" fill="#b22234"/>
+                  <rect y="16" width="40" height="2" fill="#b22234"/>
+                  <rect y="20" width="40" height="2" fill="#b22234"/>
+                  <!-- Blue canton -->
+                  <rect width="18" height="12" fill="#3c3b6e"/>
+                  <!-- Stars mockup -->
+                  <circle cx="3" cy="3" r="0.75" fill="#fff"/>
+                  <circle cx="7" cy="3" r="0.75" fill="#fff"/>
+                  <circle cx="11" cy="3" r="0.75" fill="#fff"/>
+                  <circle cx="15" cy="3" r="0.75" fill="#fff"/>
+                  <circle cx="5" cy="6" r="0.75" fill="#fff"/>
+                  <circle cx="9" cy="6" r="0.75" fill="#fff"/>
+                  <circle cx="13" cy="6" r="0.75" fill="#fff"/>
+                  <circle cx="3" cy="9" r="0.75" fill="#fff"/>
+                  <circle cx="7" cy="9" r="0.75" fill="#fff"/>
+                  <circle cx="11" cy="9" r="0.75" fill="#fff"/>
+                  <circle cx="15" cy="9" r="0.75" fill="#fff"/>
+                </svg>
+                <div class="text-left">
+                  <span class="block text-xs font-bold text-slate-800">USD / USDT</span>
+                  <span class="block text-[10px] text-slate-400">United States</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Flow badge graphic -->
+            <div class="flex items-center justify-between border-t border-slate-100 pt-4 text-left">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                  <i data-lucide="credit-card" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <span class="block text-[10px] text-slate-400">বিকাশ / নগদ পেমেন্ট</span>
+                  <span class="block text-xs font-semibold text-slate-700">বিকাশ এজেন্ট ক্যাশআউট</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+                  <i data-lucide="wallet" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <span class="block text-[10px] text-slate-400">ইনস্ট্যান্ট রিসিভ</span>
+                  <span class="block text-xs font-semibold text-slate-700">Binance Pay ID</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Decorative floating elements -->
+          <div class="absolute -top-4 -right-4 w-12 h-12 bg-blue-100/50 rounded-full flex items-center justify-center text-blue-600 shadow-sm border border-white animate-pulse">
+            <span class="font-bold text-sm">৳</span>
+          </div>
+          <div class="absolute -bottom-4 -left-4 w-12 h-12 bg-emerald-100/50 rounded-full flex items-center justify-center text-emerald-600 shadow-sm border border-white animate-pulse-subtle">
+            <span class="font-bold text-sm">$</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Exchange Calculator Card Section -->
+      <div class="lg:col-span-6 animate-slide-up" style="animation-delay: 0.15s;">
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-premium-lg p-6 md:p-8 relative">
+          
+          <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2 pb-3 border-b border-slate-100">
+            <i data-lucide="calculator" class="w-5.5 h-5.5 text-blue-600"></i>
+            এক্সচেঞ্জ ক্যালকুলেটর
+          </h2>
+
+          <form id="calculator-form" class="space-y-5">
+            
+            <!-- Send Field Group -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2">আমি পাঠাবো</label>
+              <div class="grid grid-cols-12 gap-2">
+                <div class="col-span-5 relative">
+                  <select id="send-method" class="w-full h-12 pl-3 pr-8 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-semibold focus:outline-none focus:border-blue-500 focus:bg-white text-sm select-hide-arrow">
+                    <option value="bkash">bKash BDT</option>
+                    <option value="nagad">Nagad BDT</option>
+                  </select>
+                  <div class="absolute right-3 top-4 pointer-events-none text-slate-500">
+                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                  </div>
+                </div>
+                <div class="col-span-7 relative">
+                  <input type="number" id="send-amount" placeholder="যেমন: 5000" class="w-full h-12 px-4 rounded-xl border border-slate-200 text-slate-800 font-bold focus:outline-none input-premium text-lg" required>
+                  <span class="absolute right-4 top-3 text-slate-400 font-bold text-sm">BDT</span>
+                </div>
+              </div>
+              <span class="block text-[11px] text-slate-400 mt-1">কত টাকা পাঠাবেন (BDT)</span>
+            </div>
+
+            <!-- Swap Divider Graphic -->
+            <div class="flex justify-center -my-2 relative z-10">
+              <div class="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 shadow-sm">
+                <i data-lucide="arrow-down" class="w-4.5 h-4.5"></i>
+              </div>
+            </div>
+
+            <!-- Receive Field Group -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2">আমি পাবো</label>
+              <div class="grid grid-cols-12 gap-2">
+                <div class="col-span-5 relative">
+                  <select id="receive-method" class="w-full h-12 pl-3 pr-8 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-semibold focus:outline-none focus:border-blue-500 focus:bg-white text-sm select-hide-arrow">
+                    <option value="binance">Binance (USDT)</option>
+                    <option value="redotpay">RedotPay (USDT)</option>
+                    <option value="wise">Wise (USD)</option>
+                    <option value="bybit">Bybit (USDT)</option>
+                    <option value="payoneer">Payoneer (USD)</option>
+                    <option value="quotex">Quotex (USD)</option>
+                    <option value="paypal">PayPal (USD)</option>
+                    <option value="usdt">USDT (TRC20/ERC20)</option>
+                  </select>
+                  <div class="absolute right-3 top-4 pointer-events-none text-slate-500">
+                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                  </div>
+                </div>
+                <div class="col-span-7 relative">
+                  <input type="text" id="receive-amount" placeholder="যেমন: 40.52" class="w-full h-12 px-4 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 font-bold focus:outline-none text-lg" readonly>
+                  <span id="receive-unit-label" class="absolute right-4 top-3 text-slate-400 font-bold text-sm">USDT</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rate badge control -->
+            <div class="flex items-center justify-between text-xs sm:text-sm bg-slate-50/80 rounded-xl p-3 border border-slate-100">
+              <span id="rate-display" class="font-semibold text-slate-600 flex items-center gap-1.5">
+                <i data-lucide="trending-up" class="w-4 h-4 text-emerald-500"></i>
+                বর্তমান রেট: 1 USDT = ৳---
+              </span>
+              <span class="text-[11px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-semibold">Active</span>
+            </div>
+
+            <!-- Exchange Summary (Small Card) -->
+            <div class="bg-indigo-50/40 border border-indigo-100/50 rounded-xl p-4 space-y-2">
+              <div class="flex justify-between items-center text-xs">
+                <span class="text-slate-500">আপনি পাঠাচ্ছেন</span>
+                <span id="summary-send-method" class="font-semibold text-slate-600">bKash BDT</span>
+              </div>
+              <div class="flex justify-between items-center border-b border-indigo-100/40 pb-2">
+                <span id="summary-send-amount" class="text-lg font-bold text-slate-800">৳0</span>
+              </div>
+              
+              <div class="flex justify-between items-center text-xs pt-1">
+                <span class="text-slate-500">আপনি পাবেন</span>
+                <span id="summary-receive-method" class="font-semibold text-slate-600">Binance USDT</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span id="summary-receive-amount" class="text-lg font-bold text-emerald-600">0.00 USDT</span>
+              </div>
+            </div>
+
+            <!-- Live Error Box -->
+            <div id="calculator-error" class="hidden text-xs bg-rose-50 text-rose-700 p-3 rounded-lg border border-rose-100 font-medium"></div>
+
+            <!-- CTA Submit Button -->
+            <button type="submit" id="btn-exchange" class="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 text-base">
+              এক্সচেঞ্জ করুন
+              <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+
+          </form>
+          
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Features Section -->
+    <section class="mt-16 md:mt-24 pt-10 border-t border-slate-200/60">
+      <div class="text-center max-w-md mx-auto mb-10">
+        <h3 class="text-2xl font-bold text-slate-800">কেন আমাদের সার্ভিস বেছে নেবেন?</h3>
+        <p class="text-sm text-slate-500 mt-1">সবচেয়ে দ্রুত ও স্বচ্ছ ডলার এক্সচেঞ্জ প্ল্যাটফর্ম</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Processing Card -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-premium hover:shadow-premium-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
+            <i data-lucide="zap" class="w-6 h-6"></i>
+          </div>
+          <h4 class="text-lg font-bold text-slate-800 mb-2">⚡ দ্রুত প্রসেসিং</h4>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            কয়েক মিনিটের মধ্যেই এক্সচেঞ্জ সম্পন্ন। আপনার পেমেন্ট পাওয়ার সাথে সাথেই আমাদের টিম রিকোয়েস্ট ভেরিফাই করে ডলার পাঠিয়ে দেয়।
+          </p>
+        </div>
+
+        <!-- Secure Card -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-premium hover:shadow-premium-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
+            <i data-lucide="shield" class="w-6 h-6"></i>
+          </div>
+          <h4 class="text-lg font-bold text-slate-800 mb-2">🔒 নিরাপদ লেনদেন</h4>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            আপনার প্রতিটি ট্রানজেকশন নিরাপদভাবে সংরক্ষিত। কোনো প্রকার ব্যক্তিগত তথ্যের ফাঁসের ঝুঁকি ছাড়াই নিশ্চিন্তে লেনদেন করুন।
+          </p>
+        </div>
+
+        <!-- Best Rates Card -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-premium hover:shadow-premium-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
+            <i data-lucide="sparkles" class="w-6 h-6"></i>
+          </div>
+          <h4 class="text-lg font-bold text-slate-800 mb-2">💰 সেরা রেট</h4>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            সবসময় প্রতিযোগিতামূলক এক্সচেঞ্জ রেট। বিডিটি এবং ইউএসডিটি বাজারে আমরাই দিচ্ছি সবচেয়ে সেরা রেট ও কম ফি।
+          </p>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200/80 mt-auto py-8">
+    <div class="container mx-auto px-4 max-w-6xl flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left text-sm text-slate-500">
+      
+      <div>
+        <p class="font-semibold text-slate-700">© 2026 Dollar Exchange Bangladesh</p>
+        <p class="text-xs mt-0.5">বিশ্বস্ত ও নির্ভরযোগ্য কারেন্সি এক্সচেঞ্জ গেটওয়ে।</p>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-6">
+        <a href="#" class="hover:text-blue-600 transition">শর্তাবলী</a>
+        <a href="#" class="hover:text-blue-600 transition">প্রাইভেসি পলিসি</a>
+        <a href="#" class="hover:text-blue-600 transition">যোগাযোগ</a>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- State & Logic Scripts -->
+  <script src="js/app.js?v=1.1"></script>
+  <script src="js/calculator.js?v=1.1"></script>
+  <script>
+    // Initialize icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>

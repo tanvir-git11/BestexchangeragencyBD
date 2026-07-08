@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Verification - Dollar Exchange Bangladesh</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              slate: '#f8fafc',
+              blue: '#2563eb',
+              blueHover: '#1d4ed8',
+              green: '#10b981',
+              greenHover: '#059669',
+            }
+          },
+          fontFamily: {
+            siliguri: ['Hind Siliguri', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 font-siliguri min-h-screen flex flex-col antialiased">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-white/85 backdrop-blur-md border-b border-slate-100/80 shadow-sm shadow-slate-100/50">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+      
+      <a href="index.html" class="flex items-center gap-3 select-none">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-200">
+          <i data-lucide="arrow-right-left" class="w-5.5 h-5.5"></i>
+        </div>
+        <div>
+          <span class="text-lg md:text-xl font-bold tracking-tight text-slate-800 flex items-center gap-1.5">
+            Dollar Exchange
+          </span>
+          <span class="hidden sm:block text-[11px] text-slate-500 -mt-0.5">
+            বাংলাদেশের বিশ্বস্ত ডলার এক্সচেঞ্জ প্ল্যাটফর্ম
+          </span>
+        </div>
+      </a>
+
+      <div class="flex items-center gap-4">
+        <button class="px-3.5 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200/80 rounded-lg transition flex items-center gap-1.5">
+          <i data-lucide="languages" class="w-3.5 h-3.5"></i>
+          <span>Bangla (BD)</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-grow container mx-auto px-4 py-8 max-w-4xl">
+    
+    <!-- Back Navigation Link -->
+    <div class="mb-6">
+      <a href="index.html" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-blue-600 transition group">
+        <i data-lucide="arrow-left" class="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform"></i>
+        হোম পেজে ফিরে যান
+      </a>
+    </div>
+
+    <!-- Grid Container -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+      
+      <!-- Left Column: Summary and Instructions -->
+      <div class="md:col-span-5 space-y-6">
+        
+        <!-- Transaction Summary Card -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-premium p-5 space-y-4">
+          <h2 class="text-base font-bold text-slate-800 border-b border-slate-100 pb-2.5 flex items-center gap-2">
+            <i data-lucide="receipt" class="w-4.5 h-4.5 text-indigo-500"></i>
+            লেনদেন বিবরণী
+          </h2>
+
+          <div class="space-y-3">
+            <div>
+              <span class="block text-[11px] text-slate-400">আপনি পাঠাচ্ছেন</span>
+              <span id="pay-summary-send" class="text-sm font-bold text-slate-700">৳0 BDT</span>
+            </div>
+            <div>
+              <span class="block text-[11px] text-slate-400">আপনি পাবেন</span>
+              <span id="pay-summary-receive" class="text-sm font-bold text-emerald-600">0.00 USDT</span>
+            </div>
+            <div>
+              <span class="block text-[11px] text-slate-400">এক্সচেঞ্জ রেট</span>
+              <span id="pay-summary-rate" class="text-sm font-medium text-slate-500">১ USDT = ৳---</span>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+      <!-- Right Column: Verification Form -->
+      <div class="md:col-span-7">
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-premium p-6 md:p-8 space-y-6">
+          
+          <h2 class="text-lg font-bold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
+            <i data-lucide="badge-check" class="w-5.5 h-5.5 text-blue-600"></i>
+            লেনদেন নিশ্চিত করুন
+          </h2>
+
+          <form id="payment-form" class="space-y-5">
+            
+            <!-- Receiver Wallet -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5" id="receive-method-label">
+                আপনার Binance Pay ID অথবা USDT ERC20/TRC20 Wallet Address
+              </label>
+              <input type="text" id="user-wallet-address" placeholder="যেমন: 82937402 অথবা T9z..." class="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none input-premium text-sm font-medium" required>
+              <span class="block text-[11px] text-slate-400 mt-1">ভুল এড্রেস দিলে লেনদেন ব্যাহত হতে পারে। প্রতিটি অক্ষর সাবধানে চেক করুন।</span>
+            </div>
+
+            <!-- User Contact Phone -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-1.5">
+                আপনার সচল মোবাইল নাম্বার (যোগাযোগের জন্য)
+              </label>
+              <input type="text" id="user-contact" placeholder="যেমন: 017XXXXXXXX" class="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none input-premium text-sm font-semibold" required>
+              <span class="block text-[11px] text-slate-400 mt-1">পেমেন্ট সংক্রান্ত কোনো সমস্যার ক্ষেত্রে এই নাম্বারে যোগাযোগ করা হবে।</span>
+            </div>
+
+            <!-- Confirmation CTA -->
+            <button type="submit" id="btn-confirm-payment" class="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 text-base">
+              লেনদেন নিশ্চিত করুন
+              <i data-lucide="check-circle" class="w-5 h-5"></i>
+            </button>
+
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Success Modal (Hidden by default) -->
+  <div id="success-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl border border-slate-100 shadow-premium-lg p-6 text-center space-y-5 animate-slide-up">
+      
+      <!-- Checkmark Graphic -->
+      <div class="w-16 h-16 rounded-full bg-emerald-50 text-emerald-500 border border-emerald-100 flex items-center justify-center mx-auto shadow-sm">
+        <i data-lucide="check" class="w-8 h-8"></i>
+      </div>
+
+      <div class="space-y-2">
+        <h3 class="text-xl font-bold text-slate-800">লেনদেন জমা হয়েছে!</h3>
+        <p class="text-sm text-slate-500">আপনার কারেন্সি এক্সচেঞ্জ রিকোয়েস্ট ভেরিফিকেশনের জন্য সফলভাবে পাঠানো হয়েছে।</p>
+      </div>
+
+      <!-- Tracking details box -->
+      <div class="bg-slate-50 border border-slate-100 rounded-xl p-3.5">
+        <span class="block text-[11px] text-slate-400 uppercase tracking-wider font-semibold">ট্র্যাকিং আইডি</span>
+        <span id="modal-tx-id" class="block text-lg font-extrabold text-indigo-600 font-mono">TX892305</span>
+      </div>
+
+      <div class="text-xs text-slate-500 text-left space-y-1 border-t border-slate-100 pt-4">
+        <div class="flex items-start gap-1.5">
+          <i data-lucide="clock" class="w-3.5 h-3.5 text-blue-500 mt-0.5 shrink-0"></i>
+          <span>আমাদের টিম ৫ থেকে ২০ মিনিটের মধ্যে এটি প্রসেস করে দেবে।</span>
+        </div>
+        <div class="flex items-start gap-1.5">
+          <i data-lucide="check-square" class="w-3.5 h-3.5 text-emerald-500 mt-0.5 shrink-0"></i>
+          <span>লেনদেনটি সম্পন্ন হলে তা অ্যাডমিন প্যানেলের রেকর্ডে আপডেট হবে।</span>
+        </div>
+      </div>
+
+      <!-- Close Button -->
+      <button id="btn-modal-close" class="w-full h-11 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl transition shadow">
+        হোম পেজে ফিরে যান
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200/80 mt-auto py-8">
+    <div class="container mx-auto px-4 max-w-4xl flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left text-sm text-slate-500">
+      <div>
+        <p class="font-semibold text-slate-700">© 2026 Dollar Exchange Bangladesh</p>
+        <p class="text-xs mt-0.5">বিশ্বস্ত ও নির্ভরযোগ্য কারেন্সি এক্সচেঞ্জ গেটওয়ে।</p>
+      </div>
+      <div class="flex flex-wrap justify-center gap-6">
+        <a href="#" class="hover:text-blue-600 transition">শর্তাবলী</a>
+        <a href="#" class="hover:text-blue-600 transition">প্রাইভেসি পলিসি</a>
+        <a href="#" class="hover:text-blue-600 transition">যোগাযোগ</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- State & Logic Scripts -->
+  <script src="js/app.js?v=1.1"></script>
+  <script src="js/payment.js?v=1.1"></script>
+  <script>
+    // Initialize icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>
