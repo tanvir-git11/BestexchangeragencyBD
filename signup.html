@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>রেজিস্ট্রেশন - Dollar Exchange Bangladesh</title>
+  <meta name="description" content="Dollar Exchange Bangladesh এ নতুন অ্যাকাউন্ট তৈরি করুন। নিরাপদ ও বিশ্বস্ত ডলার এক্সচেঞ্জ প্ল্যাটফর্ম।">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              slate: '#f8fafc',
+              blue: '#2563eb',
+              blueHover: '#1d4ed8',
+              green: '#10b981',
+              greenHover: '#059669',
+            }
+          },
+          fontFamily: {
+            siliguri: ['Hind Siliguri', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 font-siliguri min-h-screen flex flex-col antialiased">
+
+  <!-- Top Decorative Bar -->
+  <div class="bg-indigo-600 text-white text-xs py-2.5 px-4">
+    <div class="container mx-auto flex items-center justify-center gap-2">
+      <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+      <span class="font-medium">নতুন অ্যাকাউন্ট রেজিস্ট্রেশন</span>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="flex-grow flex items-center justify-center px-4 py-8 md:py-12">
+    <div class="w-full max-w-lg animate-slide-up">
+
+      <!-- Logo -->
+      <div class="text-center mb-6">
+        <a href="index.html" class="inline-flex items-center gap-3 select-none">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-200">
+            <i data-lucide="arrow-right-left" class="w-6 h-6"></i>
+          </div>
+          <div class="text-left">
+            <span class="text-xl font-bold tracking-tight text-slate-800">Dollar Exchange</span>
+            <span class="block text-[11px] text-slate-500 -mt-0.5">বাংলাদেশের বিশ্বস্ত ডলার এক্সচেঞ্জ</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Registration Card -->
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-premium-lg p-6 md:p-8 space-y-6">
+
+        <div class="text-center space-y-1.5">
+          <h1 class="text-2xl font-bold text-slate-800">অ্যাকাউন্ট তৈরি করুন</h1>
+          <p class="text-sm text-slate-500">আপনার তথ্য দিয়ে রেজিস্ট্রেশন সম্পন্ন করুন</p>
+        </div>
+
+        <form id="signup-form" class="space-y-4">
+
+          <!-- Name Row -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- First Name -->
+            <div>
+              <label for="signup-firstname" class="block text-sm font-semibold text-slate-700 mb-1.5">নামের প্রথম অংশ</label>
+              <div class="relative">
+                <div class="absolute left-3.5 top-3.5 text-slate-400">
+                  <i data-lucide="user" class="w-4 h-4"></i>
+                </div>
+                <input type="text" id="signup-firstname" placeholder="যেমন: মোহাম্মদ"
+                  class="w-full h-12 pl-10 pr-4 rounded-xl border border-slate-200 text-slate-800 font-medium focus:outline-none input-premium text-sm" required>
+              </div>
+            </div>
+
+            <!-- Last Name -->
+            <div>
+              <label for="signup-lastname" class="block text-sm font-semibold text-slate-700 mb-1.5">নামের শেষ অংশ</label>
+              <div class="relative">
+                <div class="absolute left-3.5 top-3.5 text-slate-400">
+                  <i data-lucide="user" class="w-4 h-4"></i>
+                </div>
+                <input type="text" id="signup-lastname" placeholder="যেমন: রহমান"
+                  class="w-full h-12 pl-10 pr-4 rounded-xl border border-slate-200 text-slate-800 font-medium focus:outline-none input-premium text-sm" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Full Name (Auto Generated) -->
+          <div>
+            <label for="signup-fullname" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              পূর্ণ নাম
+              <span class="text-[10px] text-slate-400 font-normal ml-1">(স্বয়ংক্রিয়ভাবে তৈরি)</span>
+            </label>
+            <div class="relative">
+              <div class="absolute left-3.5 top-3.5 text-slate-400">
+                <i data-lucide="id-card" class="w-4 h-4"></i>
+              </div>
+              <input type="text" id="signup-fullname" placeholder="নামের প্রথম ও শেষ অংশ দিন"
+                class="w-full h-12 pl-10 pr-4 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 font-semibold focus:outline-none text-sm cursor-not-allowed" readonly>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label for="signup-email" class="block text-sm font-semibold text-slate-700 mb-1.5">ইমেইল ঠিকানা</label>
+            <div class="relative">
+              <div class="absolute left-3.5 top-3.5 text-slate-400">
+                <i data-lucide="mail" class="w-4 h-4"></i>
+              </div>
+              <input type="email" id="signup-email" placeholder="you@example.com"
+                class="w-full h-12 pl-10 pr-4 rounded-xl border border-slate-200 text-slate-800 font-medium focus:outline-none input-premium text-sm" required autocomplete="email">
+            </div>
+          </div>
+
+          <!-- Phone -->
+          <div>
+            <label for="signup-phone" class="block text-sm font-semibold text-slate-700 mb-1.5">ফোন নাম্বার</label>
+            <div class="relative">
+              <div class="absolute left-3.5 top-3.5 text-slate-400">
+                <i data-lucide="phone" class="w-4 h-4"></i>
+              </div>
+              <input type="tel" id="signup-phone" placeholder="01XXXXXXXXX" maxlength="11"
+                class="w-full h-12 pl-10 pr-4 rounded-xl border border-slate-200 text-slate-800 font-medium focus:outline-none input-premium text-sm" required>
+            </div>
+            <span class="block text-[10px] text-slate-400 mt-1">বাংলাদেশের ১১ ডিজিটের মোবাইল নাম্বার</span>
+          </div>
+
+          <!-- Date of Birth -->
+          <div>
+            <label for="signup-dob" class="block text-sm font-semibold text-slate-700 mb-1.5">জন্ম তারিখ</label>
+            <div class="relative">
+              <div class="absolute left-3.5 top-3.5 text-slate-400">
+                <i data-lucide="calendar" class="w-4 h-4"></i>
+              </div>
+              <input type="date" id="signup-dob"
+                class="w-full h-12 pl-10 pr-4 rounded-xl border border-slate-200 text-slate-800 font-medium focus:outline-none input-premium text-sm" required>
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div>
+            <label for="signup-password" class="block text-sm font-semibold text-slate-700 mb-1.5">পাসওয়ার্ড</label>
+            <div class="relative">
+              <div class="absolute left-3.5 top-3.5 text-slate-400">
+                <i data-lucide="lock" class="w-4 h-4"></i>
+              </div>
+              <input type="password" id="signup-password" placeholder="কমপক্ষে ৬ অক্ষর"
+                class="w-full h-12 pl-10 pr-12 rounded-xl border border-slate-200 text-slate-800 font-medium focus:outline-none input-premium text-sm" required autocomplete="new-password" minlength="6">
+              <button type="button" class="toggle-pass-btn absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 transition-colors" data-target="signup-password">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div>
+            <label for="signup-confirm-password" class="block text-sm font-semibold text-slate-700 mb-1.5">পাসওয়ার্ড নিশ্চিত করুন</label>
+            <div class="relative">
+              <div class="absolute left-3.5 top-3.5 text-slate-400">
+                <i data-lucide="lock" class="w-4 h-4"></i>
+              </div>
+              <input type="password" id="signup-confirm-password" placeholder="পুনরায় পাসওয়ার্ড দিন"
+                class="w-full h-12 pl-10 pr-12 rounded-xl border border-slate-200 text-slate-800 font-medium focus:outline-none input-premium text-sm" required autocomplete="new-password" minlength="6">
+              <button type="button" class="toggle-pass-btn absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 transition-colors" data-target="signup-confirm-password">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- NID Warning Notice -->
+          <div class="bg-amber-50 border border-amber-200/60 rounded-xl p-4 flex gap-3">
+            <div class="shrink-0 mt-0.5">
+              <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center">
+                <i data-lucide="alert-triangle" class="w-4.5 h-4.5"></i>
+              </div>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-amber-800 mb-1">গুরুত্বপূর্ণ বিজ্ঞপ্তি</p>
+              <p class="text-xs text-amber-700 leading-relaxed">
+                আপনার সকল তথ্য অবশ্যই জাতীয় পরিচয়পত্র (NID)-এর তথ্যের সাথে হুবহু মিল থাকতে হবে। ভুল তথ্য প্রদান করলে আপনার অ্যাকাউন্ট ভেরিফিকেশন বাতিল হতে পারে।
+              </p>
+            </div>
+          </div>
+
+          <!-- Error Box -->
+          <div id="signup-error" class="hidden text-xs bg-rose-50 text-rose-700 p-3 rounded-lg border border-rose-100 font-medium flex items-center gap-2">
+            <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+            <span id="signup-error-text"></span>
+          </div>
+
+          <!-- Success Box -->
+          <div id="signup-success" class="hidden text-xs bg-emerald-50 text-emerald-700 p-3 rounded-lg border border-emerald-100 font-medium flex items-center gap-2">
+            <i data-lucide="check-circle" class="w-4 h-4 shrink-0"></i>
+            <span id="signup-success-text"></span>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" id="btn-signup" class="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 text-base">
+            রেজিস্ট্রেশন করুন
+            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+          </button>
+
+        </form>
+
+        <!-- Divider -->
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-slate-100"></div>
+          </div>
+          <div class="relative flex justify-center text-xs">
+            <span class="px-3 bg-white text-slate-400 font-medium">অথবা</span>
+          </div>
+        </div>
+
+        <!-- Sign In Link -->
+        <div class="text-center">
+          <p class="text-sm text-slate-500">
+            ইতিমধ্যেই অ্যাকাউন্ট আছে?
+            <a href="signin.html" class="font-bold text-blue-600 hover:text-blue-700 transition-colors ml-1">
+              সাইন ইন করুন
+            </a>
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Back to Home -->
+      <div class="text-center mt-6">
+        <a href="index.html" class="text-xs text-slate-400 hover:text-blue-600 transition flex items-center justify-center gap-1">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> হোম পেজে ফিরে যান
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-6 text-center text-xs text-slate-400">
+    <p>© 2026 Dollar Exchange Bangladesh. সর্বস্বত্ব সংরক্ষিত।</p>
+  </footer>
+
+  <!-- Firebase SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+  <!-- App Scripts -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // If already logged in, redirect to home
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          window.location.href = 'index.html';
+        }
+      });
+
+      const form = document.getElementById('signup-form');
+      const firstNameInput = document.getElementById('signup-firstname');
+      const lastNameInput = document.getElementById('signup-lastname');
+      const fullNameInput = document.getElementById('signup-fullname');
+      const emailInput = document.getElementById('signup-email');
+      const phoneInput = document.getElementById('signup-phone');
+      const dobInput = document.getElementById('signup-dob');
+      const passwordInput = document.getElementById('signup-password');
+      const confirmPasswordInput = document.getElementById('signup-confirm-password');
+      const errorBox = document.getElementById('signup-error');
+      const errorText = document.getElementById('signup-error-text');
+      const successBox = document.getElementById('signup-success');
+      const successText = document.getElementById('signup-success-text');
+      const btnSignup = document.getElementById('btn-signup');
+
+      // Auto-generate full name
+      function updateFullName() {
+        const first = firstNameInput.value.trim();
+        const last = lastNameInput.value.trim();
+        fullNameInput.value = [first, last].filter(Boolean).join(' ');
+      }
+      firstNameInput.addEventListener('input', updateFullName);
+      lastNameInput.addEventListener('input', updateFullName);
+
+      // Phone: digits only
+      phoneInput.addEventListener('input', () => {
+        phoneInput.value = phoneInput.value.replace(/\D/g, '');
+      });
+
+      // Toggle password visibility
+      document.querySelectorAll('.toggle-pass-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetId = btn.getAttribute('data-target');
+          const input = document.getElementById(targetId);
+          if (input) {
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+            btn.innerHTML = isPassword
+              ? '<i data-lucide="eye-off" class="w-4 h-4"></i>'
+              : '<i data-lucide="eye" class="w-4 h-4"></i>';
+            if (window.lucide) lucide.createIcons();
+          }
+        });
+      });
+
+      // Handle form submission
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideMessages();
+
+        const firstName = firstNameInput.value.trim();
+        const lastName = lastNameInput.value.trim();
+        const fullName = fullNameInput.value.trim();
+        const email = emailInput.value.trim();
+        const phone = phoneInput.value.trim();
+        const dob = dobInput.value;
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        // Validation
+        if (!firstName || !lastName || !email || !phone || !dob || !password || !confirmPassword) {
+          showError('সবগুলো ঘর সঠিকভাবে পূরণ করুন।');
+          return;
+        }
+
+        if (phone.length !== 11 || !phone.startsWith('01')) {
+          showError('সঠিক ১১ ডিজিটের মোবাইল নাম্বার দিন (01 দিয়ে শুরু)।');
+          return;
+        }
+
+        if (password.length < 6) {
+          showError('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।');
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          showError('পাসওয়ার্ড এবং নিশ্চিত পাসওয়ার্ড মিলছে না।');
+          return;
+        }
+
+        // Show loading
+        btnSignup.disabled = true;
+        btnSignup.innerHTML = `
+          <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>অ্যাকাউন্ট তৈরি হচ্ছে...</span>
+        `;
+
+        const result = await registerUser(email, password, {
+          firstName,
+          lastName,
+          fullName,
+          phone,
+          dateOfBirth: dob
+        });
+
+        if (result.success) {
+          showSuccess('অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে! পুনঃনির্দেশ করা হচ্ছে...');
+          setTimeout(() => {
+            window.location.href = 'account.html';
+          }, 1500);
+        } else {
+          showError(result.message);
+          btnSignup.disabled = false;
+          btnSignup.innerHTML = `রেজিস্ট্রেশন করুন <i data-lucide="arrow-right" class="w-5 h-5"></i>`;
+          if (window.lucide) lucide.createIcons();
+        }
+      });
+
+      function showError(msg) {
+        errorText.innerText = msg;
+        errorBox.classList.remove('hidden');
+        errorBox.classList.add('flex');
+        successBox.classList.add('hidden');
+      }
+
+      function showSuccess(msg) {
+        successText.innerText = msg;
+        successBox.classList.remove('hidden');
+        successBox.classList.add('flex');
+        errorBox.classList.add('hidden');
+      }
+
+      function hideMessages() {
+        errorBox.classList.add('hidden');
+        successBox.classList.add('hidden');
+      }
+
+      // Initialize icons
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

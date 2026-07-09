@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>সাইন ইন - Dollar Exchange Bangladesh</title>
+  <meta name="description" content="Dollar Exchange Bangladesh এ সাইন ইন করুন। নিরাপদ ও বিশ্বস্ত ডলার এক্সচেঞ্জ প্ল্যাটফর্ম।">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              slate: '#f8fafc',
+              blue: '#2563eb',
+              blueHover: '#1d4ed8',
+              green: '#10b981',
+              greenHover: '#059669',
+            }
+          },
+          fontFamily: {
+            siliguri: ['Hind Siliguri', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 font-siliguri min-h-screen flex flex-col antialiased">
+
+  <!-- Top Decorative Bar -->
+  <div class="bg-indigo-600 text-white text-xs py-2.5 px-4">
+    <div class="container mx-auto flex items-center justify-center gap-2">
+      <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+      <span class="font-medium">নিরাপদ ও এনক্রিপ্টেড লগইন</span>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="flex-grow flex items-center justify-center px-4 py-10 md:py-16">
+    <div class="w-full max-w-md animate-slide-up">
+
+      <!-- Logo -->
+      <div class="text-center mb-8">
+        <a href="index.html" class="inline-flex items-center gap-3 select-none">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-200">
+            <i data-lucide="arrow-right-left" class="w-6 h-6"></i>
+          </div>
+          <div class="text-left">
+            <span class="text-xl font-bold tracking-tight text-slate-800">Dollar Exchange</span>
+            <span class="block text-[11px] text-slate-500 -mt-0.5">বাংলাদেশের বিশ্বস্ত ডলার এক্সচেঞ্জ</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Sign In Card -->
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-premium-lg p-6 md:p-8 space-y-6">
+
+        <div class="text-center space-y-1.5">
+          <h1 class="text-2xl font-bold text-slate-800">সাইন ইন করুন</h1>
+          <p class="text-sm text-slate-500">আপনার অ্যাকাউন্টে প্রবেশ করুন</p>
+        </div>
+
+        <form id="signin-form" class="space-y-5">
+
+          <!-- Email -->
+          <div>
+            <label for="signin-email" class="block text-sm font-semibold text-slate-700 mb-1.5">ইমেইল ঠিকানা</label>
+            <div class="relative">
+              <div class="absolute left-3.5 top-3.5 text-slate-400">
+                <i data-lucide="mail" class="w-4.5 h-4.5"></i>
+              </div>
+              <input type="email" id="signin-email" placeholder="you@example.com" 
+                class="w-full h-12 pl-11 pr-4 rounded-xl border border-slate-200 text-slate-800 font-medium focus:outline-none input-premium text-sm" required autocomplete="email">
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="signin-password" class="block text-sm font-semibold text-slate-700">পাসওয়ার্ড</label>
+            </div>
+            <div class="relative">
+              <div class="absolute left-3.5 top-3.5 text-slate-400">
+                <i data-lucide="lock" class="w-4.5 h-4.5"></i>
+              </div>
+              <input type="password" id="signin-password" placeholder="আপনার পাসওয়ার্ড দিন" 
+                class="w-full h-12 pl-11 pr-12 rounded-xl border border-slate-200 text-slate-800 font-medium focus:outline-none input-premium text-sm" required autocomplete="current-password">
+              <button type="button" id="toggle-password" class="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 transition-colors">
+                <i data-lucide="eye" class="w-4.5 h-4.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Error Box -->
+          <div id="signin-error" class="hidden text-xs bg-rose-50 text-rose-700 p-3 rounded-lg border border-rose-100 font-medium flex items-center gap-2">
+            <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+            <span id="signin-error-text"></span>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" id="btn-signin" class="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 text-base">
+            সাইন ইন করুন
+            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+          </button>
+
+        </form>
+
+        <!-- Divider -->
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-slate-100"></div>
+          </div>
+          <div class="relative flex justify-center text-xs">
+            <span class="px-3 bg-white text-slate-400 font-medium">অথবা</span>
+          </div>
+        </div>
+
+        <!-- Sign Up Link -->
+        <div class="text-center">
+          <p class="text-sm text-slate-500">
+            নতুন অ্যাকাউন্ট তৈরি করতে চান?
+            <a href="signup.html" class="font-bold text-blue-600 hover:text-blue-700 transition-colors ml-1">
+              রেজিস্ট্রেশন করুন
+            </a>
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Back to Home -->
+      <div class="text-center mt-6">
+        <a href="index.html" class="text-xs text-slate-400 hover:text-blue-600 transition flex items-center justify-center gap-1">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> হোম পেজে ফিরে যান
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-6 text-center text-xs text-slate-400">
+    <p>© 2026 Dollar Exchange Bangladesh. সর্বস্বত্ব সংরক্ষিত।</p>
+  </footer>
+
+  <!-- Firebase SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+  <!-- App Scripts -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // If already logged in, redirect to home
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          window.location.href = 'index.html';
+        }
+      });
+
+      const form = document.getElementById('signin-form');
+      const emailInput = document.getElementById('signin-email');
+      const passwordInput = document.getElementById('signin-password');
+      const errorBox = document.getElementById('signin-error');
+      const errorText = document.getElementById('signin-error-text');
+      const btnSignin = document.getElementById('btn-signin');
+      const togglePassword = document.getElementById('toggle-password');
+
+      // Toggle password visibility
+      let passwordVisible = false;
+      togglePassword.addEventListener('click', () => {
+        passwordVisible = !passwordVisible;
+        passwordInput.type = passwordVisible ? 'text' : 'password';
+        togglePassword.innerHTML = passwordVisible 
+          ? '<i data-lucide="eye-off" class="w-4.5 h-4.5"></i>'
+          : '<i data-lucide="eye" class="w-4.5 h-4.5"></i>';
+        if (window.lucide) lucide.createIcons();
+      });
+
+      // Handle form submission
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!email || !password) {
+          showError('সবগুলো ঘর পূরণ করুন।');
+          return;
+        }
+
+        // Show loading
+        btnSignin.disabled = true;
+        btnSignin.innerHTML = `
+          <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>সাইন ইন হচ্ছে...</span>
+        `;
+
+        const result = await signInUser(email, password);
+        
+        if (result.success) {
+          window.location.href = 'index.html';
+        } else {
+          showError(result.message);
+          btnSignin.disabled = false;
+          btnSignin.innerHTML = `সাইন ইন করুন <i data-lucide="arrow-right" class="w-5 h-5"></i>`;
+          if (window.lucide) lucide.createIcons();
+        }
+      });
+
+      function showError(msg) {
+        errorText.innerText = msg;
+        errorBox.classList.remove('hidden');
+        errorBox.classList.add('flex');
+      }
+
+      // Initialize icons
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

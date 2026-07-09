@@ -59,6 +59,10 @@
           <i data-lucide="languages" class="w-3.5 h-3.5"></i>
           <span>Bangla (BD)</span>
         </button>
+        <!-- Auth Container -->
+        <div id="header-auth-container" class="flex items-center gap-2">
+          <!-- Dynamically populated by auth.js -->
+        </div>
       </div>
 
     </div>
@@ -207,6 +211,14 @@
 
   <!-- State & Logic Scripts -->
   <script src="js/app.js?v=1.1"></script>
+  
+  <!-- Firebase SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/payment.js?v=1.1"></script>
   <script>
     // Initialize icons
