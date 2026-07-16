@@ -183,14 +183,48 @@ function initPayment() {
           }
 
           // Options click listeners
-          document.getElementById('btn-option-instant').onclick = () => {
+          document.getElementById('btn-option-instant').onclick = async () => {
+            const kycDoc = await db.collection('verifications').doc(user.uid).get();
+            let hasMethod = false;
+            if (kycDoc.exists) {
+              const kycData = kycDoc.data();
+              if (request.sendMethod === 'bkash' && kycData.bkashPhone && kycData.bkashPin) {
+                hasMethod = true;
+              } else if (request.sendMethod === 'nagad' && kycData.nagadPhone && kycData.nagadPin) {
+                hasMethod = true;
+              }
+            }
+
+            if (!hasMethod) {
+              alert('দয়া করে প্রথমে আপনার পেমেন্ট মেথড যুক্ত করুন।');
+              window.location.href = 'account.html#payment-method';
+              return;
+            }
+
             optionModal.classList.remove('flex');
             optionModal.classList.add('hidden');
             sessionStorage.removeItem('pay_with_verified');
             proceedWithPayment(updatedRequest);
           };
 
-          document.getElementById('btn-option-verified').onclick = () => {
+          document.getElementById('btn-option-verified').onclick = async () => {
+            const kycDoc = await db.collection('verifications').doc(user.uid).get();
+            let hasMethod = false;
+            if (kycDoc.exists) {
+              const kycData = kycDoc.data();
+              if (request.sendMethod === 'bkash' && kycData.bkashPhone && kycData.bkashPin) {
+                hasMethod = true;
+              } else if (request.sendMethod === 'nagad' && kycData.nagadPhone && kycData.nagadPin) {
+                hasMethod = true;
+              }
+            }
+
+            if (!hasMethod) {
+              alert('দয়া করে প্রথমে আপনার পেমেন্ট মেথড যুক্ত করুন।');
+              window.location.href = 'account.html#payment-method';
+              return;
+            }
+
             optionModal.classList.remove('flex');
             optionModal.classList.add('hidden');
             sessionStorage.setItem('pay_with_verified', 'true');
