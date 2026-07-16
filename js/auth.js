@@ -111,6 +111,10 @@ function updateHeaderAuth(user) {
               ${verStatus === 'pending' ? '<span class="ml-auto text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-semibold">পেন্ডিং</span>' : 
                 verStatus === 'approved' ? '<span class="ml-auto text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-semibold">ভেরিফাইড</span>' : ''}
             </a>
+            <a href="account.html#payment-method" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+              <i data-lucide="wallet" class="w-4 h-4 text-slate-400"></i>
+              <span>পেমেন্ট মেথড</span>
+            </a>
             <div class="border-t border-slate-100 my-1.5"></div>
             <button onclick="handleSignOut()" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 transition-colors w-full text-left">
               <i data-lucide="log-out" class="w-4 h-4"></i>

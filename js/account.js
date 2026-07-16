@@ -129,7 +129,9 @@ function initAccount() {
       // Check if there's a verification document
       const verDoc = await db.collection('verifications').doc(user.uid).get();
       
-      if (verStatus === 'pending') {
+      if (window.location.hash === '#payment-method') {
+        showKycState('step1_complete');
+      } else if (verStatus === 'pending') {
         showKycState('pending');
       } else if (verStatus === 'approved') {
         showKycState('approved');
@@ -152,7 +154,7 @@ function initAccount() {
       if (window.lucide) lucide.createIcons();
 
       // Scroll to verification section if hash
-      if (window.location.hash === '#verification') {
+      if (window.location.hash === '#verification' || window.location.hash === '#payment-method') {
         setTimeout(() => {
           document.getElementById('verification-section')?.scrollIntoView({ behavior: 'smooth' });
         }, 300);
@@ -527,6 +529,31 @@ function initAccount() {
     // 3. direct file URL
     return `https://api.telegram.org/file/bot${botToken}/${filePath}`;
   }
+
+  // Handle hash change dynamically
+  window.addEventListener('hashchange', () => {
+    if (window.location.hash === '#payment-method') {
+      showKycState('step1_complete');
+      setTimeout(() => {
+        document.getElementById('verification-section')?.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+    } else if (window.location.hash === '#verification') {
+      if (currentUserData) {
+        updateVerificationUI(currentUserData.verificationStatus);
+        const verStatus = currentUserData.verificationStatus || 'not_started';
+        if (verStatus === 'pending') {
+          showKycState('pending');
+        } else if (verStatus === 'approved') {
+          showKycState('approved');
+        } else {
+          showKycState('not_started');
+        }
+      }
+      setTimeout(() => {
+        document.getElementById('verification-section')?.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+    }
+  });
 
 }
 
