@@ -74,7 +74,7 @@ function updateHeaderAuth(user) {
     }
 
     const statusColor = verStatus === 'approved' ? 'bg-emerald-500' : 
-                         verStatus === 'pending' ? 'bg-amber-500' : 'bg-slate-400';
+                         verStatus === 'pending' ? 'bg-amber-500' : 'bg-rose-500';
 
     authContainer.innerHTML = `
       <div class="relative" id="profile-dropdown-wrapper">

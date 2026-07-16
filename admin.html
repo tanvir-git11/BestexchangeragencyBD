@@ -103,16 +103,23 @@
       </div>
     </header>
 
+    <!-- Firestore Diagnostic -->
+    <div id="firestore-diag" class="hidden bg-slate-50 border-b border-slate-200 px-4 sm:px-8 py-2"></div>
+
     <!-- Tab Navigation -->
     <div class="bg-white border-b border-slate-100 shadow-sm">
       <div class="container mx-auto px-4 flex gap-6">
-        <button id="btn-tab-exchange" class="px-4 py-3.5 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-2 transition-all">
+        <button id="btn-tab-exchange" class="px-4 py-3.5 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 transition-all">
           <i data-lucide="arrow-right-left" class="w-4 h-4"></i>
           লেনদেন ও সেটিংস
         </button>
         <button id="btn-tab-verification" class="px-4 py-3.5 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 transition-all">
           <i data-lucide="shield-check" class="w-4 h-4"></i>
           গ্রাহক ভেরিফিকেশন (KYC)
+        </button>
+        <button id="btn-tab-users" class="px-4 py-3.5 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-2 transition-all">
+          <i data-lucide="users" class="w-4 h-4"></i>
+          রেজিস্টার্ড ইউজার
         </button>
       </div>
     </div>
@@ -121,7 +128,7 @@
     <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl">
       
       <!-- Exchange & Settings Panel -->
-      <div id="panel-exchange" class="space-y-8">
+      <div id="panel-exchange" class="hidden space-y-8">
         
         <!-- Top Settings Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -310,8 +317,9 @@
             </tbody>
           </table>
         </div>
+      </div> <!-- End of Transactions Panel -->
+    </div> <!-- End of panel-exchange -->
 
-      </div> <!-- End of panel-exchange -->
 
       <!-- Verification (KYC) Requests Panel -->
       <div id="panel-verification" class="hidden space-y-6">
@@ -329,6 +337,7 @@
           <div class="flex items-center gap-3">
             <select id="filter-kyc-status" class="h-9 px-3 rounded-lg border border-slate-200 text-xs font-semibold focus:outline-none bg-slate-50">
               <option value="pending">পেন্ডিং রিকোয়েস্ট (Pending)</option>
+              <option value="step1_complete">স্টেপ ১ সম্পন্ন (Step 1 Done)</option>
               <option value="approved">অনুমোদিত (Approved)</option>
               <option value="rejected">বাতিলকৃত (Rejected)</option>
               <option value="all">সবগুলো (All)</option>
@@ -342,6 +351,51 @@
           <div class="md:col-span-2 text-center py-20 bg-white rounded-2xl border border-slate-100 shadow-premium text-slate-400">
             <div class="w-8 h-8 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
             <p class="text-sm font-medium">ভেরিফিকেশন ডাটা লোড হচ্ছে...</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Registered Users Panel -->
+      <div id="panel-users" class="space-y-6">
+
+        <div class="bg-white p-5 rounded-2xl shadow-premium border border-slate-100">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100 flex-wrap gap-4">
+            <div>
+              <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                <i data-lucide="users" class="w-5 h-5 text-indigo-500"></i>
+                রেজিস্টার্ড ইউজার সকল
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">সকল নিবন্ধিত গ্রাহকের তালিকা ও তথ্য।</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <span id="users-count" class="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg">মোট: ০ জন</span>
+            </div>
+          </div>
+
+          <!-- Users Table Container -->
+          <div id="users-container" class="overflow-x-auto">
+            <table class="w-full text-sm mt-4">
+              <thead>
+                <tr class="text-left text-xs text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-100">
+                  <th class="pb-3 pr-4">#</th>
+                  <th class="pb-3 pr-4">নাম</th>
+                  <th class="pb-3 pr-4">ইমেইল</th>
+                  <th class="pb-3 pr-4">ফোন</th>
+                  <th class="pb-3 pr-4">অ্যাকাউন্ট আইডি</th>
+                  <th class="pb-3 pr-4">স্ট্যাটাস</th>
+                  <th class="pb-3 pr-4">সাইন আপ</th>
+                </tr>
+              </thead>
+              <tbody id="users-table-body">
+                <tr>
+                  <td colspan="7" class="text-center py-16 text-slate-400">
+                    <div class="w-8 h-8 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+                    <p class="text-sm font-medium">ইউজার ডাটা লোড হচ্ছে...</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -365,7 +419,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   
   <script src="js/firebase-config.js"></script>
-  <script src="js/admin.js?v=1.1"></script>
+  <script src="js/admin.js?v=1.4"></script>
   <script>
     // Initialize icons
     lucide.createIcons();

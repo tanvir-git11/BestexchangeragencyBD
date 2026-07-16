@@ -225,8 +225,64 @@ function initCalculator() {
   sendAmountInput.addEventListener('input', updateCalculator);
 
   // Handle Exchange Form Submission
-  btnExchange.addEventListener('click', (e) => {
+  btnExchange.addEventListener('click', async (e) => {
     e.preventDefault();
+    
+    // Check if user is logged in and verified
+    const cachedProfile = getCachedProfile();
+    const currentUser = auth.currentUser;
+    
+    if (!cachedProfile && !currentUser) {
+      // Redirect to login page if not logged in
+      window.location.href = 'signin.html';
+      return;
+    }
+    
+    // Check verification status, fetch fresh from Firestore if needed
+    let isVerified = cachedProfile && cachedProfile.verificationStatus === 'approved';
+    
+    if (!isVerified && currentUser) {
+      try {
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          isVerified = userData.verificationStatus === 'approved';
+          
+          // Update cached profile
+          sessionStorage.setItem('user_profile', JSON.stringify({
+            ...cachedProfile,
+            verificationStatus: userData.verificationStatus
+          }));
+        }
+      } catch (error) {
+        console.error('Error checking verification status:', error);
+        alert('ভেরিফিকেশন স্ট্যাটাস চেক করতে সমস্যা হয়েছে!');
+        return;
+      }
+    }
+    
+    if (!isVerified) {
+      // Show verification modal
+      const modal = document.getElementById('verification-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        
+        // Initialize Lucide icons in modal
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+        
+        // Add button click listener
+        const btnGoToVerification = document.getElementById('btn-go-to-verification');
+        if (btnGoToVerification) {
+          btnGoToVerification.onclick = () => {
+            window.location.href = 'account.html#verification';
+          };
+        }
+      }
+      return;
+    }
     
     const sendAmount = parseFloat(sendAmountInput.value) || 0;
     const sendMethod = sendMethodSelect.value;

@@ -264,9 +264,11 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      let isSigningUp = false;
+
       // If already logged in, redirect to home
       auth.onAuthStateChanged((user) => {
-        if (user) {
+        if (user && !isSigningUp) {
           window.location.href = 'index.html';
         }
       });
@@ -351,6 +353,8 @@
           return;
         }
 
+        isSigningUp = true;
+
         // Show loading
         btnSignup.disabled = true;
         btnSignup.innerHTML = `
@@ -375,6 +379,7 @@
             window.location.href = 'account.html';
           }, 1500);
         } else {
+          isSigningUp = false;
           showError(result.message);
           btnSignup.disabled = false;
           btnSignup.innerHTML = `রেজিস্ট্রেশন করুন <i data-lucide="arrow-right" class="w-5 h-5"></i>`;

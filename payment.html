@@ -155,6 +155,71 @@
 
   </main>
 
+  <!-- Verification Required Modal -->
+  <div id="verification-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-md rounded-2xl border border-slate-100 shadow-premium-lg p-8 text-center space-y-6 animate-slide-up">
+      <!-- Icon -->
+      <div class="w-20 h-20 rounded-full bg-amber-50 text-amber-500 border border-amber-100 flex items-center justify-center mx-auto shadow-sm">
+        <i data-lucide="shield-alert" class="w-10 h-10"></i>
+      </div>
+
+      <!-- Text -->
+      <div class="space-y-2">
+        <h3 class="text-2xl font-bold text-slate-800">অ্যাকাউন্ট ভেরিফিকেশন প্রয়োজন!</h3>
+        <p class="text-sm text-slate-500">এক্সচেঞ্জ করার আগে আপনাকে অবশ্যই আপনার অ্যাকাউন্ট ভেরিফাই করতে হবে।</p>
+      </div>
+
+      <!-- Button -->
+      <button id="btn-go-to-verification" class="w-full h-12 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 text-base">
+        <i data-lucide="user-check" class="w-5 h-5"></i>
+        এখনই ভেরিফাই করুন
+      </button>
+    </div>
+  </div>
+
+  <!-- Payment Option Modal -->
+  <div id="payment-option-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-sm rounded-2xl border border-slate-100 shadow-premium-lg p-6 space-y-5 animate-slide-up">
+      <div class="text-center space-y-2">
+        <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto">
+          <i data-lucide="wallet" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-lg font-bold text-slate-800">পেমেন্ট অপশন নির্বাচন করুন</h3>
+        <p class="text-xs text-slate-400">আপনার লেনদেন সম্পন্ন করতে যেকোনো একটি অপশন বেছে নিন।</p>
+      </div>
+
+      <div class="space-y-2.5">
+        <!-- Option 1: Instant Payment -->
+        <button id="btn-option-instant" class="w-full p-3.5 rounded-xl border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/20 text-left transition flex items-center gap-3 group">
+          <div class="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 group-hover:bg-indigo-100 transition">
+            <i data-lucide="zap" class="w-4.5 h-4.5"></i>
+          </div>
+          <div>
+            <span class="block text-xs.5 font-bold text-slate-700">ইনস্ট্যান্ট পেমেন্ট (Instant Payment)</span>
+            <span class="block text-[10.5px] text-slate-400">ম্যানুয়ালি নম্বর ও পিন দিয়ে সরাসরি পরিশোধ করুন।</span>
+          </div>
+        </button>
+
+        <!-- Option 2: Pay with Verified KYC Account -->
+        <button id="btn-option-verified" class="w-full p-3.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 text-left transition flex items-center gap-3 group">
+          <div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 group-hover:bg-emerald-100 transition">
+            <i data-lucide="shield-check" class="w-4.5 h-4.5"></i>
+          </div>
+          <div>
+            <span class="block text-xs.5 font-bold text-slate-700">ভেরিফাইড অ্যাকাউন্ট পেমেন্ট (One-Click)</span>
+            <span class="block text-[10.5px] text-slate-400">KYC তথ্য ব্যবহার করে শুধুমাত্র OTP কোড দিয়ে পরিশোধ করুন।</span>
+          </div>
+        </button>
+      </div>
+
+      <div class="text-center pt-1">
+        <button id="btn-close-option-modal" class="text-xs text-slate-400 hover:text-slate-600 font-semibold transition">
+          বাতিল করুন
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Success Modal (Hidden by default) -->
   <div id="success-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-2xl border border-slate-100 shadow-premium-lg p-6 text-center space-y-5 animate-slide-up">

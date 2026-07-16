@@ -337,26 +337,8 @@
             </div>
           </div>
 
-          <!-- Account Type -->
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">অ্যাকাউন্ট টাইপ</label>
-            <div class="grid grid-cols-2 gap-3">
-              <label class="cursor-pointer">
-                <input type="radio" name="account-type" value="personal" class="hidden" checked>
-                <div class="border-2 border-slate-200 rounded-xl p-3 text-center transition-all hover:border-blue-400 account-type-card" data-type="personal">
-                  <i data-lucide="user" class="w-5 h-5 mx-auto text-slate-400 mb-1"></i>
-                  <span class="text-sm font-semibold text-slate-700">Personal</span>
-                </div>
-              </label>
-              <label class="cursor-pointer">
-                <input type="radio" name="account-type" value="agent" class="hidden">
-                <div class="border-2 border-slate-200 rounded-xl p-3 text-center transition-all hover:border-blue-400 account-type-card" data-type="agent">
-                  <i data-lucide="briefcase" class="w-5 h-5 mx-auto text-slate-400 mb-1"></i>
-                  <span class="text-sm font-semibold text-slate-700">Agent</span>
-                </div>
-              </label>
-            </div>
-          </div>
+          <!-- Account Type (Hidden, always Personal) -->
+          <input type="hidden" name="account-type" value="personal">
 
           <!-- Account Number -->
           <div>

