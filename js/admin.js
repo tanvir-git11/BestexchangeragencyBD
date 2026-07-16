@@ -413,6 +413,13 @@ function initAdmin() {
         query = query.where('status', '==', statusFilter);
       }
       
+      // Fetch all users to map signup details
+      const usersSnapshot = await db.collection('users').get();
+      const usersMap = {};
+      usersSnapshot.forEach(uDoc => {
+        usersMap[uDoc.id] = uDoc.data();
+      });
+
       // Fetch without orderBy to prevent Firestore index errors
       const snapshot = await query.get();
       
@@ -439,6 +446,7 @@ function initAdmin() {
       docs.forEach(doc => {
         const kyc = doc.data();
         const uid = doc.id;
+        const userProfile = usersMap[uid] || {};
         const submittedDate = kyc.submittedAt ? kyc.submittedAt.toDate().toLocaleString('bn-BD') : 'N/A';
         
         let statusBadge = '';
@@ -459,8 +467,8 @@ function initAdmin() {
           <div class="space-y-3">
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
-                <h2 class="font-bold text-slate-800 text-base">${kyc.fullName || 'Unknown'}</h2>
-                <p class="text-xs text-slate-400 mt-0.5">জমা: ${submittedDate}</p>
+                <h2 class="font-bold text-slate-800 text-base">${kyc.fullName || userProfile.fullName || 'Unknown'}</h2>
+                <p class="text-[11px] text-slate-400 mt-0.5">ইমেইল: ${userProfile.email || 'N/A'} | জমা: ${submittedDate}</p>
               </div>
               <div>
                 ${statusBadge}
@@ -470,7 +478,7 @@ function initAdmin() {
             <div class="grid grid-cols-2 gap-3 text-xs">
               <div class="bg-slate-50 p-2.5 rounded-lg">
                 <span class="block text-slate-400 font-semibold mb-0.5">মোবাইল নাম্বার</span>
-                <span class="font-bold text-slate-700">${kyc.phone || kyc.bkashPhone || kyc.nagadPhone || 'Unknown'}</span>
+                <span class="font-bold text-slate-700">${userProfile.phone || kyc.phone || kyc.bkashPhone || kyc.nagadPhone || 'Unknown'}</span>
               </div>
               <div class="bg-slate-50 p-2.5 rounded-lg">
                 <span class="block text-slate-400 font-semibold mb-0.5">পেমেন্ট মেথড</span>
