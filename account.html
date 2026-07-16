@@ -179,7 +179,7 @@
         </div>
 
         <!-- ── Progress Steps ── -->
-        <div id="kyc-progress" class="mb-8">
+        <div id="kyc-progress" class="mb-8 hidden">
           <div class="flex items-center justify-between relative">
             <!-- Progress Line Background -->
             <div class="absolute top-5 left-[15%] right-[15%] h-1 bg-slate-200 rounded-full z-0"></div>
@@ -211,7 +211,7 @@
             <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
               <i data-lucide="credit-card" class="w-4 h-4"></i>
             </div>
-            <h3 class="text-base font-bold text-slate-800">ধাপ ১ — NID ভেরিফিকেশন + পেমেন্ট প্রমাণ</h3>
+            <h3 class="text-base font-bold text-slate-800">NID ভেরিফিকেশন + পেমেন্ট প্রমাণ</h3>
           </div>
 
           <!-- NID Front -->
@@ -300,10 +300,43 @@
             </div>
           </div>
 
+          <!-- ── Selfie Image (inside Step 1) ── -->
+          <div class="border-t border-slate-100 pt-5">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-7 h-7 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
+                <i data-lucide="user" class="w-4 h-4"></i>
+              </div>
+              <h4 class="text-sm font-bold text-slate-800">আপনার সেলফি ছবি (Selfie Image)</h4>
+            </div>
+
+            <p class="text-sm text-slate-600 leading-relaxed mb-4">
+              আপনার নিজের একটি স্পষ্ট সেলফি ছবি আপলোড করুন।
+            </p>
+
+            <div>
+              <div id="selfie-upload" class="upload-area border-2 border-dashed border-slate-200 hover:border-blue-400 rounded-xl p-6 text-center cursor-pointer transition-all group relative">
+                <input type="file" id="selfie-input" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div id="selfie-placeholder" class="space-y-2">
+                  <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
+                    <i data-lucide="camera" class="w-6 h-6"></i>
+                  </div>
+                  <p class="text-sm text-slate-500 font-medium">সেলফি ছবি আপলোড করুন</p>
+                  <p class="text-[10px] text-slate-400">JPG, PNG — সর্বোচ্চ ৫MB</p>
+                </div>
+                <div id="selfie-preview" class="hidden">
+                  <img id="selfie-img" class="max-h-48 mx-auto rounded-lg shadow-sm" alt="Selfie Preview">
+                  <p class="text-[11px] text-emerald-600 font-semibold mt-2 flex items-center justify-center gap-1">
+                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> সেলফি সিলেক্ট হয়েছে
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Submit -->
           <button id="btn-step1-submit" class="w-full h-12 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
             <i data-lucide="shield-check" class="w-5 h-5"></i>
-            NID + স্ক্রিনশট সাবমিট করুন
+            ভেরিফিকেশন রিকোয়েস্ট সাবমিট করুন
           </button>
         </div>
 
@@ -313,7 +346,7 @@
             <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
               <i data-lucide="wallet" class="w-4 h-4"></i>
             </div>
-            <h3 class="text-base font-bold text-slate-800">ধাপ ২ — পেমেন্ট মেথড</h3>
+            <h3 class="text-base font-bold text-slate-800">পেমেন্ট মেথড</h3>
           </div>
 
           <!-- Payment Method Select -->
@@ -366,10 +399,7 @@
 
           <!-- Buttons -->
           <div class="flex gap-3">
-            <button id="btn-step2-back" class="flex-1 h-12 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-all flex items-center justify-center gap-2">
-              <i data-lucide="arrow-left" class="w-4 h-4"></i> পূর্ববর্তী
-            </button>
-            <button id="btn-step2-submit" class="flex-[2] h-12 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            <button id="btn-step2-submit" class="w-full h-12 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
               <i data-lucide="shield-check" class="w-5 h-5"></i>
               পেমেন্ট মেথড সাবমিট করুন
             </button>

